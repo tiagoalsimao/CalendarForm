@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CalendarForm 
    Caption         =   "Select Date"
-   ClientHeight    =   3360
-   ClientLeft      =   7
-   ClientTop       =   224
-   ClientWidth     =   3227
+   ClientHeight    =   4368
+   ClientLeft      =   -63
+   ClientTop       =   -84
+   ClientWidth     =   3157
    OleObjectBlob   =   "CalendarForm.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -1362,6 +1362,7 @@ Private Sub SetDays( _
                         'Set text color
                         If CurrentDay = TodayDay Then
                             .ForeColor = lblDateTodayColor
+                            .BackColor = RGB(200, 200, 200)
                         ElseIf j = SaturdayIndex Then
                             .ForeColor = lblDateSatColor
                         ElseIf j = SundayIndex Then
