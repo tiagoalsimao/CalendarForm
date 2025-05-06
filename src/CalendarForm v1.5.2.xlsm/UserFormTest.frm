@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Private Sub TextBox1_Enter()
@@ -25,11 +26,9 @@ Private Sub TextBox1_Enter()
     End If
          
     Dim DateSelected
-    DateSelected = CalendarForm.GetDate(CurrentDate, Monday, , , , , True, True, True, FirstFourDays)
+    DateSelected = CalendarForm.GetDate(CurrentDate, Monday, , , , , True, False, True, FirstFourDays, TodayFontColor:=255)
     
-    If DateSelected Is Date Then
-        TextBox1.value = DateSelected
-    End If
+    If DateSelected <> 0 Then TextBox1.value = DateSelected
     
 End Sub
 
