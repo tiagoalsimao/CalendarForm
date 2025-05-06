@@ -390,7 +390,7 @@ Private Sub InitializeUserform( _
     'Month scroll bar. I set a maximum height for the scroll bar, because as it gets
     'larger, the width of the scroll buttons never increases, so eventually it ends
     'up looking really tall and skinny and weird.
-    With scrlMonth
+    With scrlMonth ' Month Scroll Bar
         .Width = bgHeader.Width - (2 * BorderSpacing)
         .Left = bgHeader.Left + BorderSpacing
         .Height = scrlMonthDefaultHeight * RatioToResize
@@ -451,7 +451,9 @@ Private Sub InitializeUserform( _
     End If
     'Day of week subheader labels
     For i = 1 To 7
-        With Me("lblDay" & CStr(i))
+        Dim DayNumberLabel As MSForms.Label
+        Set DayNumberLabel = Me("lblDay" & CStr(i))
+        With DayNumberLabel
             .AutoSize = False
             .Height = lblDateDefaultHeight * RatioToResize
             .Font.Size = SizeFont
@@ -472,11 +474,13 @@ Private Sub InitializeUserform( _
     
     'Size all date labels and backgrounds
     For i = 1 To 6 'Rows
+        Dim WeekLabel As MSForms.Label
+        Set WeekLabel = Me("lblWeek" & CStr(i))
         'First set position and visibility of week number label
         If Not bWeekNumbers Then
-            Me("lblWeek" & CStr(i)).Visible = False
+            WeekLabel.Visible = False
         Else
-            With Me("lblWeek" & CStr(i))
+            With WeekLabel
                 .AutoSize = False
                 .Height = lblDateDefaultHeight * RatioToResize
                 .Font.Size = SizeFont
@@ -689,7 +693,9 @@ Private Sub InitializeUserform( _
     End If
     For i = 1 To 6
         For j = 1 To 7
-            With Me("bgDate" & CStr(i) & CStr(j))
+            Dim BackGroundLabel As MSForms.Label
+            Set BackGroundLabel = Me("bgDate" & CStr(i) & CStr(j))
+            With BackGroundLabel
                 If DateBorder Then
                     .BorderStyle = fmBorderStyleSingle
                     .BorderColor = DateBorderColor
@@ -975,6 +981,7 @@ End Sub
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Private Sub scrlMonth_Change()
     Dim TempYear As Long        'Temporarily store selected year to test min and max dates
+    'TODO: make Min and Max constants
     Dim MinMonth As Long        'Sets lower limit of scroll bar
     Dim MaxMonth As Long        'Sets upper limit of scroll bar
     Dim SelectedMonth As Long   'Month of selected date
@@ -1362,7 +1369,6 @@ Private Sub SetDays( _
                         'Set text color
                         If CurrentDay = TodayDay Then
                             .ForeColor = lblDateTodayColor
-                            .BackColor = RGB(200, 200, 200)
                         ElseIf j = SaturdayIndex Then
                             .ForeColor = lblDateSatColor
                         ElseIf j = SundayIndex Then

@@ -32,6 +32,3 @@ Private Sub TextBox1_Enter()
     
 End Sub
 
-Private Sub UserForm_Click()
-
-End Sub
