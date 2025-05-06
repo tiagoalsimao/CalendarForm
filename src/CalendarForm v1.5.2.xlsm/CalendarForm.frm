@@ -2,9 +2,9 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} CalendarForm 
    Caption         =   "Select Date"
    ClientHeight    =   3360
-   ClientLeft      =   42
-   ClientTop       =   378
-   ClientWidth     =   2751
+   ClientLeft      =   7
+   ClientTop       =   224
+   ClientWidth     =   3227
    OleObjectBlob   =   "CalendarForm.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -216,30 +216,31 @@ Private lblDateSunColor As Long             'Font color of Sunday date labels
 '       calendar and from next month at the bottom of the calendar.
 '   TodayFontColor (Long) - Sets the font color of today's date.
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Function GetDate(Optional SelectedDate As Date = 0, _
-    Optional FirstDayOfWeek As calDayOfWeek = Sunday, _
-    Optional MinimumDate As Date = 0, _
-    Optional MaximumDate As Date = 0, _
-    Optional RangeOfYears As Long = 10, _
-    Optional DateFontSize As Long = 9, _
-    Optional TodayButton As Boolean = False, Optional OkayButton As Boolean = False, _
-    Optional ShowWeekNumbers As Boolean = False, Optional FirstWeekOfYear As calFirstWeekOfYear = FirstJan1, _
-    Optional PositionTop As Long = -5, Optional PositionLeft As Long = -5, _
-    Optional BackgroundColor As Long = 16777215, _
-    Optional HeaderColor As Long = 15658734, _
-    Optional HeaderFontColor As Long = 0, _
-    Optional SubHeaderColor As Long = 16448250, _
-    Optional SubHeaderFontColor As Long = 8553090, _
-    Optional DateColor As Long = 16777215, _
-    Optional DateFontColor As Long = 0, _
-    Optional SaturdayFontColor As Long = 0, _
-    Optional SundayFontColor As Long = 0, _
-    Optional DateBorder As Boolean = False, Optional DateBorderColor As Long = 15658734, _
-    Optional DateSpecialEffect As fmSpecialEffect = fmSpecialEffectFlat, _
-    Optional DateHoverColor As Long = 15658734, _
-    Optional DateSelectedColor As Long = 14277081, _
-    Optional TrailingMonthFontColor As Long = 12566463, _
-    Optional TodayFontColor As Long = 15773696) As Date
+Public Function GetDate( _
+            Optional SelectedDate As Date = 0, _
+            Optional FirstDayOfWeek As calDayOfWeek = Sunday, _
+            Optional MinimumDate As Date = 0, _
+            Optional MaximumDate As Date = 0, _
+            Optional RangeOfYears As Long = 10, _
+            Optional DateFontSize As Long = 9, _
+            Optional TodayButton As Boolean = False, Optional OkayButton As Boolean = False, _
+            Optional ShowWeekNumbers As Boolean = False, Optional FirstWeekOfYear As calFirstWeekOfYear = FirstJan1, _
+            Optional PositionTop As Long = -5, Optional PositionLeft As Long = -5, _
+            Optional BackgroundColor As Long = 16777215, _
+            Optional HeaderColor As Long = 15658734, _
+            Optional HeaderFontColor As Long = 0, _
+            Optional SubHeaderColor As Long = 16448250, _
+            Optional SubHeaderFontColor As Long = 8553090, _
+            Optional DateColor As Long = 16777215, _
+            Optional DateFontColor As Long = 0, _
+            Optional SaturdayFontColor As Long = 0, _
+            Optional SundayFontColor As Long = 0, _
+            Optional DateBorder As Boolean = False, Optional DateBorderColor As Long = 15658734, _
+            Optional DateSpecialEffect As fmSpecialEffect = fmSpecialEffectFlat, _
+            Optional DateHoverColor As Long = 15658734, _
+            Optional DateSelectedColor As Long = 14277081, _
+            Optional TrailingMonthFontColor As Long = 12566463, _
+            Optional TodayFontColor As Long = 15773696) As Date
     
     'Set global variables
     DateFontSize = Max(DateFontSize, 9) 'Font size cannot be below 9
@@ -282,17 +283,23 @@ End Function
 '
 ' The visibility of the Okay button, Today button, and week numbers is also set here.
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Sub InitializeUserform(SelectedDate As Date, MinimumDate As Date, MaximumDate As Date, _
-    RangeOfYears As Long, _
-    PositionTop As Long, PositionLeft As Long, _
-    SizeFont As Long, bWeekNumbers As Boolean, _
-    BackgroundColor As Long, _
-    HeaderColor As Long, _
-    HeaderFontColor As Long, _
-    SubHeaderColor As Long, _
-    SubHeaderFontColor As Long, _
-    DateBorder As Boolean, DateBorderColor As Long, _
-    DateSpecialEffect As fmSpecialEffect)
+Private Sub InitializeUserform( _
+            SelectedDate As Date, _
+            MinimumDate As Date, _
+            MaximumDate As Date, _
+            RangeOfYears As Long, _
+            PositionTop As Long, _
+            PositionLeft As Long, _
+            SizeFont As Long, _
+            bWeekNumbers As Boolean, _
+            BackgroundColor As Long, _
+            HeaderColor As Long, _
+            HeaderFontColor As Long, _
+            SubHeaderColor As Long, _
+            SubHeaderFontColor As Long, _
+            DateBorder As Boolean, _
+            DateBorderColor As Long, _
+            DateSpecialEffect As fmSpecialEffect)
     
     Dim TempDate As Date                        'Used to set selected date, if none has been provided
     Dim SelectedYear As Long                    'Year of selected date
@@ -1033,7 +1040,10 @@ End Sub
 ' the month changes to make sure the months displayed in the combobox don't ever fall
 ' outside the bounds set by the minimum or maximum date.
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Sub SetMonthCombobox(YearIn As Long, MonthIn As Long)
+Private Sub SetMonthCombobox( _
+            YearIn As Long, _
+            MonthIn As Long)
+        
     Dim YearMinDate As Long             'Year of the minimum date
     Dim YearMaxDate As Long             'Year of the maximum date
     Dim MonthMinDate As Long            'Month of the minimum date
@@ -1088,7 +1098,10 @@ End Sub
 ' made to the selected month or year. It also sets the month and year labels in the
 ' header, and positions them in the center of the month scroll bar.
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Sub SetMonthYear(MonthIn As Long, YearIn As Long)
+Private Sub SetMonthYear( _
+            MonthIn As Long, _
+            YearIn As Long)
+    
     Dim ExtraSpace As Double                'Space between month and year labels
     Dim CombinedLabelWidth As Double        'Combined width of both month and year labels
     
@@ -1145,7 +1158,11 @@ End Sub
 ' sub, it will highlight that date accordingly. Otherwise, no selected date will be
 ' highlighted.
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Sub SetDays(MonthIn As Long, YearIn As Long, Optional DayIn As Long)
+Private Sub SetDays( _
+            MonthIn As Long, _
+            YearIn As Long, _
+            Optional DayIn As Long)
+            
     Dim PrevMonth As Long               'Month preceding selected month. Used for trailing dates
     Dim NextMonth As Long               'Month following selected month. Used for trailing dates
     Dim Today As Date                   'Today's date
@@ -1406,7 +1423,10 @@ End Sub
 ' This function checks the current month and year to see if they match the selected
 ' date. If so, it returns the day number of the selected date. If not, it returns 0.
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Function GetSelectedDay(MonthIn As Long, YearIn As Long) As Long
+Private Function GetSelectedDay( _
+            MonthIn As Long, _
+            YearIn As Long) As Long
+            
     GetSelectedDay = 0
     
     'Check if a selected date was provided by the user
@@ -1643,15 +1663,26 @@ Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, 
         Me.Controls(HoverControlName).BackColor = HoverControlColor
     End If
 End Sub
-Private Sub frameCalendar_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub frameCalendar_MouseMove( _
+            ByVal Button As Integer, _
+            ByVal Shift As Integer, _
+            ByVal X As Single, _
+            ByVal Y As Single)
+            
     If HoverControlName <> vbNullString Then
         Me.Controls(HoverControlName).BackColor = HoverControlColor
     End If
 End Sub
-Private Sub bgDayLabels_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+Private Sub bgDayLabels_MouseMove( _
+            ByVal Button As Integer, _
+            ByVal Shift As Integer, _
+            ByVal X As Single, _
+            ByVal Y As Single)
+            
     If HoverControlName <> vbNullString Then
         Me.Controls(HoverControlName).BackColor = HoverControlColor
     End If
+    
 End Sub
 
 
