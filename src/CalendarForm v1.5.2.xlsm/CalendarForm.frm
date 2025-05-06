@@ -1187,8 +1187,10 @@ Private Sub SetDays( _
     Dim MaxDay As Long                  'Stores upper limit of days if maximum date falls in selected month
     Dim PrevMonthMinDay As Long         'Stores lower limit of days if minimum date falls in preceding month
     Dim NextMonthMaxDay As Long         'Stores upper limit of days if maximum date falls in next month
-    Dim lblControl As MSForms.Control   'Stores current date label while changing settings
-    Dim bgControl As MSForms.Control    'Stores current date label background while changing settings
+    'Dim lblControl As MSForms.Control   'Stores current date label while changing settings
+    Dim lblControl As MSForms.Label   'Stores current date label while changing settings
+    'Dim bgControl As MSForms.Control    'Stores current date label background while changing settings
+    Dim bgControl As MSForms.Label 'Stores current date label background while changing settings
     Dim i As Long                       'Used for looping
     Dim j As Long                       'Used for looping
     
