@@ -28,7 +28,12 @@ Private Sub TextBox1_Enter()
     Dim DateSelected
     DateSelected = CalendarForm.GetDate(CurrentDate, Monday, , , , , True, False, True, FirstFourDays, TodayFontColor:=255)
     
-    If DateSelected <> 0 Then TextBox1.value = DateSelected
-    
+    If DateSelected <> 0 Then
+        Dim DateFormat As String
+        DateFormat = DateFormatModule.GetDateFormat()
+        
+        ' Force output the same as the date format
+        txtDate.value = Format(DateSelected, DateFormat)
+    End If
 End Sub
 
