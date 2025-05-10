@@ -37,3 +37,11 @@ Private Sub TextBox1_Enter()
     End If
 End Sub
 
+Private Sub txtDate_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
+'    Select Case KeyAscii
+'        Case 48 To 57 ' Allow digits 0�9
+'        Case 8        ' Allow backspace
+'        Case Else
+            KeyAscii = 0 ' Block all other input
+'    End Select
+End Sub
