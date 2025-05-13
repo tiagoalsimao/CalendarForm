@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} UserFormTest 
    Caption         =   "UserForm1"
-   ClientHeight    =   4438
-   ClientLeft      =   56
-   ClientTop       =   252
-   ClientWidth     =   10871
+   ClientHeight    =   4459
+   ClientLeft      =   -189
+   ClientTop       =   -826
+   ClientWidth     =   7602
    OleObjectBlob   =   "UserFormTest.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,26 +13,40 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-
 Option Explicit
+
+Private Sub CalendarImageLabel_Click()
+    UpdateDateWithCalendar TextBox2
+End Sub
+
+Private Sub ComboBoxDate_DropButtonClick()
+    UpdateDateWithCalendar ComboBoxDate
+End Sub
+
+Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
+    txtDate.Text = GetCalendarDate(txtDate.Text)
+End Sub
+
+Private Sub ComboBoxDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    TreatDateWithKeyboardEntry TextBox2, KeyCode
+End Sub
+
+Private Sub Image1_BeforeDragOver(ByVal Cancel As MSForms.ReturnBoolean, ByVal Data As MSForms.DataObject, ByVal X As Single, ByVal Y As Single, ByVal DragState As MSForms.fmDragState, ByVal Effect As MSForms.ReturnEffect, ByVal Shift As Integer)
+
+End Sub
 
 Private Sub LabelDate_Click()
     LabelDate.Caption = GetCalendarDate(LabelDate.Caption)
+End Sub
+
+Private Sub ListBox1_Click()
+
 End Sub
 
 Private Sub UserForm_Initialize()
     ComboBoxDate.value = Date
     txtDate.value = Date
     LabelDate.Caption = Date
-End Sub
-
-Private Sub ComboBoxDate_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
-    KeyAscii = 0
-End Sub
-
-Private Sub ComboBoxDate_Enter()
-    ComboBoxDate.value = GetCalendarDate(ComboBoxDate.value)
-    TextBox2.SetFocus
 End Sub
 
 Private Function GetCalendarDate(UserFormObjectValue As String) As String
@@ -49,11 +63,9 @@ Private Function GetCalendarDate(UserFormObjectValue As String) As String
     DateSelected = CalendarForm.GetDate(CurrentDate, Monday, , , , , True, False, True, FirstFourDays, TodayFontColor:=255)
     
     If DateSelected <> 0 Then
-        Dim DateFormat As String
-        DateFormat = DateFormatModule.GetDateFormat()
         
         ' Force output the same as the date format
-        UserFormObjectValue = Format(DateSelected, DateFormat)
+        GetCalendarDate = CStr(DateSelected)
     End If
  
 End Function
@@ -62,53 +74,89 @@ Private Sub txtDate_Enter()
     txtDate.value = GetCalendarDate(txtDate.value)
 End Sub
 
-Private Sub txtDate_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
-'    Select Case KeyAscii
-'        Case 48 To 57 ' Allow digits 0–9
-'        Case 8        ' Allow backspace
-'        Case Else
-            KeyAscii = 0 ' Block all other input
-'    End Select
+Private Sub TextBox2_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    TreatDateWithKeyboardEntry TextBox2, KeyCode
 End Sub
 
-'Private Sub txtDate_Change()
-'    Dim cleaned As String
-'    Dim formatted As String
-'
-'    Dim TypedDate As String
-'    TypedDate = txtDate.Text
-'
-'
-'    If IsDate(TypedDate) Then Exit Sub
-'
-'    cleaned = Replace(txtDate.Text, "/", "")
-'
-'    ' Auto-insert slashes as DD/MM/YYYY
-'    If Len(cleaned) > 8 Then cleaned = Left(cleaned, 8)
-'
-'    Select Case Len(cleaned)
-'        Case 3 To 4
-'            formatted = Left(cleaned, 2) & "/" & Mid(cleaned, 3)
-'        Case 5 To 6
-'            formatted = Left(cleaned, 2) & "/" & Mid(cleaned, 3, 2) & "/" & Mid(cleaned, 5)
-'        Case 7 To 8
-'            formatted = Left(cleaned, 2) & "/" & Mid(cleaned, 3, 2) & "/" & Mid(cleaned, 5)
-'        Case Else
-'            formatted = cleaned
-'    End Select
-'
-'    If formatted <> txtDate.Text Then
-'        txtDate.Text = formatted
-'        txtDate.SelStart = Len(formatted)
-'    End If
-'End Sub
-'
-'Private Sub txtDate_Exit(ByVal Cancel As MSForms.ReturnBoolean)
-'    If Not IsDate(txtDate.Text) Then
-'        MsgBox "Invalid date. Please enter a valid date in DD/MM/YYYY format.", vbExclamation
-'        Cancel = True
-'    Else
-'        txtDate.Text = Format(CDate(txtDate.Text), "dd/mm/yyyy")
-'    End If
-'End Sub
+Sub TreatDateWithKeyboardEntry( _
+            txtDate As MSForms.TextBox, _
+            KeyCode As MSForms.ReturnInteger)
+    
+    If KeyCode = vbKeyUp Or KeyCode = vbKeyDown Or KeyCode = vbKeyLeft Or KeyCode = vbKeyRight _
+           Or KeyCode = vbKeyEnd Or KeyCode = vbKeyHome Then
+        Exit Sub
+    End If
+    
+    Dim KeyPosition As Byte
+    KeyPosition = txtDate.SelStart
+    
+    ' TODO: ' Allow Delete
+    ' TODO: ' Allow Selection of part of the date = Replace all selected value with "_"
+    If KeyCode = vbKeyBack And KeyPosition > 0 Then
+        ' Allow Backspace
+        txtDate.Text = DateBackSpace(txtDate.Text, KeyPosition)
+        txtDate.SelStart = WorksheetFunction.Max(0, KeyPosition - 1)
+    ElseIf (KeyCode >= vbKey0 And KeyCode <= vbKey9) _
+            Or (KeyCode >= vbKeyNumpad0 And KeyCode <= vbKeyNumpad9) Then
+        ' Allow numbers
+        UpdateDateTextBox txtDate, KeyCode
+    End If
+    
+    ' Cancel any key update
+    KeyCode = 0
+    
+End Sub
+
+Private Sub UpdateDateTextBox( _
+            txtDate As MSForms.TextBox, _
+            KeyCode As MSForms.ReturnInteger)
+    
+    With txtDate
+        Dim TextDate As String
+        TextDate = .Text
+        
+        Dim KeyPosition As Byte
+        KeyPosition = .SelStart + 1
+        
+        Dim InputNumber As Byte
+        InputNumber = GetDigitFromKeyCode(KeyCode)
+        
+        UpdateDate TextDate, KeyPosition, InputNumber
+        
+        ' Skip Date Separator
+        If KeyPosition = 2 Or KeyPosition = 5 Then KeyPosition = KeyPosition + 1
+        
+        .Text = TextDate
+        .SelStart = KeyPosition
+    End With
+    
+End Sub
+
+Function GetDigitFromKeyCode(KeyCode As MSForms.ReturnInteger) As Byte
+    Select Case KeyCode
+        Case vbKey0 To vbKey9
+            GetDigitFromKeyCode = KeyCode - vbKey0
+        Case vbKeyNumpad0 To vbKeyNumpad9
+            GetDigitFromKeyCode = KeyCode - vbKeyNumpad0
+        Case Else
+            GetDigitFromKeyCode = -1 ' Not a digit
+    End Select
+End Function
+
+Private Sub TextBox2_Enter()
+    SetDateMask TextBox2
+End Sub
+
+Private Sub SetDateMask(txtDate As MSForms.TextBox)
+    ' Set initial mask if empty
+    If txtDate.Text = "" Then
+        txtDate.Text = "__/__/____"
+        txtDate.SelStart = 0
+        txtDate.SelLength = 2
+    End If
+End Sub
+
+Private Sub TextBox2_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    ' Optional: Adjust selection to prevent selecting slashes
+End Sub
 
