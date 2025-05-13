@@ -56,4 +56,135 @@ Sub AdvancedCalendar2()
     If dateVariable <> 0 Then Range("H61") = dateVariable
 End Sub
 
+Private Sub TestUpdateDate()
+    Debug.Print UpdateDate("__/__/____", 1, 1) = "1_/__/____"
+    Debug.Print UpdateDate("1_/__/____", 2, 2) = "12/__/____"
+    
+    Debug.Print UpdateDate("5_/__/____", 5, 1) = "05/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print UpdateDate("3_/__/____", 3, 2) = "31/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print UpdateDate("0_/__/____", 0, 2) = "01/__/____"
+    
+    Debug.Print UpdateDate("__/__/____", 1, 3) = "__/1_/____"
+    Debug.Print UpdateDate("__/__/____", 3, 5) = "__/_3/____"
+    Debug.Print UpdateDate("__/_3/____", 3, 5) = "__/_3/____"
+    Debug.Print UpdateDate("__/03/____", 3, 5) = "__/03/____"
+    Debug.Print UpdateDate("__/0_/____", 0, 5) = "__/01/____"
+    Debug.Print UpdateDate("__/33/____", 3, 5) = "__/12/____"
+    Debug.Print UpdateDate("__/__/____", 4, 4) = "__/04/____" 'adds leading zero as cannot have months above 12
+    
+    Debug.Print UpdateDate("__/__/____", 1, 6) = "__/__/1___"
+    Debug.Print UpdateDate("__/__/____", 1, 7) = "__/__/1___"
+    Debug.Print UpdateDate("__/__/1___", 2, 8) = "__/__/12__"
+    Debug.Print UpdateDate("__/__/12__", 3, 9) = "__/__/123_"
+    Debug.Print UpdateDate("__/__/123_", 4, 10) = "__/__/1234"
+    Debug.Print UpdateDate("__/__/1234", 5, 11) = "__/__/1235"
+    
+    Debug.Print UpdateDate("31/12/2025", 2, 11) = "31/12/2022"
+    
+End Sub
+
+Public Function UpdateDate( _
+            ByRef CurrentDate As String, _
+            ByRef CharPosition As Byte, _
+            NewChar As Byte) As String
+    
+    ' Only allow digits to be inserted
+    If NewChar < 0 Or NewChar > 9 Then
+        UpdateDate = CurrentDate
+        Exit Function
+    End If
+    
+    ' Move one char to the rigth if Char Position falls in Date Separator
+    If CharPosition = 3 Or CharPosition = 6 Then CharPosition = CharPosition + 1
+    
+    ' Change last position
+    If CharPosition > 10 Then CharPosition = 10
+    
+    ' Replace the character at CharPosition
+    Dim TempDate As String
+    TempDate = CurrentDate
+    
+    ' Convert Tens to Units if: Day over 4 and Month over 1. Eg. Day = "5_" -> "05"
+    If (NewChar > 3 And CharPosition = 1) Or (NewChar > 1 And CharPosition = 4) Then
+        Mid(TempDate, CharPosition, 1) = 0
+        
+        CharPosition = CharPosition + 1
+        Mid(TempDate, CharPosition, 1) = CStr(NewChar)
+    Else
+        Mid(TempDate, CharPosition, 1) = CStr(NewChar)
+    End If
+    
+    ' Fix Day Maximum
+    Dim dayStr As String
+    dayStr = Mid(TempDate, 1, 2)
+    If IsNumeric(dayStr) Then
+        dayStr = Format(WorksheetFunction.Max(1, WorksheetFunction.Min(31, dayStr)), "00")
+    End If
+    
+    ' Fix Month Maximum
+    Dim monthStr As String
+    monthStr = Mid(TempDate, 4, 2)
+    If IsNumeric(monthStr) Then
+        monthStr = Format(WorksheetFunction.Max(1, WorksheetFunction.Min(12, monthStr)), "00")
+    End If
+    
+    Dim yearStr As String
+    yearStr = Mid(TempDate, 7, 4)
+    
+    UpdateDate = Join(Array(dayStr, monthStr, yearStr), "/")
+    
+    CurrentDate = UpdateDate
+    
+End Function
+
+Private Sub TestDateBackSpace()
+    Debug.Print DateBackSpace("1_/__/____", 1) = "__/__/____"
+    Debug.Print DateBackSpace("12/__/____", 2) = "1_/__/____"
+    
+    Debug.Print DateBackSpace("05/__/____", 1) = "_5/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateBackSpace("31/__/____", 2) = "3_/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateBackSpace("01/__/____", 2) = "0_/__/____"
+    
+    Debug.Print DateBackSpace("_1/__/____", 3) = "__/__/____"
+    Debug.Print DateBackSpace("__/1_/____", 4) = "__/__/____"
+    Debug.Print DateBackSpace("__/_3/____", 5) = "__/__/____"
+    Debug.Print DateBackSpace("__/__/____", 5) = "__/__/____"
+    Debug.Print DateBackSpace("__/01/____", 5) = "__/0_/____"
+    Debug.Print DateBackSpace("__/12/____", 5) = "__/1_/____"
+    Debug.Print DateBackSpace("__/34/____", 4) = "__/_4/____" 'adds leading zero as cannot have months above 12
+    
+    Debug.Print DateBackSpace("__/_1/____", 6) = "__/__/____"
+    Debug.Print DateBackSpace("__/__/1___", 7) = "__/__/____"
+    Debug.Print DateBackSpace("__/__/12__", 8) = "__/__/1___"
+    Debug.Print DateBackSpace("__/__/123_", 9) = "__/__/12__"
+    Debug.Print DateBackSpace("__/__/1234", 10) = "__/__/123_"
+    
+    Debug.Print DateBackSpace("1_/__/1234", 0) = "1_/__/1234"
+    
+    Debug.Print DateBackSpace("31/12/2025", 1) = "_1/12/2025"
+    
+End Sub
+
+Public Function DateBackSpace( _
+            ByRef CurrentDate As String, _
+            CharPosition As Byte) As String
+            
+    ' Move one char to the rigth if Char Position falls in Date Separator
+    If CharPosition = 3 Or CharPosition = 6 Then CharPosition = CharPosition - 1
+    
+    ' Change last position
+    If CharPosition < 1 Then
+        DateBackSpace = CurrentDate
+        Exit Function
+    End If
+    
+    Dim TempDate As String
+    TempDate = CurrentDate
+    Mid(TempDate, CharPosition, 1) = "_"
+    
+    DateBackSpace = TempDate
+    
+    CurrentDate = DateBackSpace
+    
+End Function
 
