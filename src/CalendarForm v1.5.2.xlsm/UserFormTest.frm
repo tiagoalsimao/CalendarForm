@@ -15,9 +15,58 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+'Private Sub CalendarImageLabel_Click()
+'    UpdateDateWithCalendar TextBox2
+'End Sub
+
 Private Sub CalendarImageLabel_Click()
-    UpdateDateWithCalendar TextBox2
+    UpdateDateFromLabelClick CalendarImageLabel
 End Sub
+
+Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
+
+    Dim txt As MSForms.TextBox
+    Set txt = GetTextBoxUnderLabel(CalendarLabel)
+
+    If txt Is Nothing Then
+        MsgBox "No matching TextBox found under Label1."
+        Exit Sub
+    End If
+    
+    UpdateDateWithCalendar txt
+    
+End Sub
+
+Function GetTextBoxUnderLabel(lbl As MSForms.Label) As MSForms.TextBox
+    Dim ctrl As MSForms.Control
+    Dim lblLeft As Double, lblTop As Double, lblRight As Double, lblBottom As Double
+    Dim txtLeft As Double, txtTop As Double, txtRight As Double, txtBottom As Double
+
+    lblLeft = lbl.Left
+    lblTop = lbl.Top
+    lblRight = lbl.Left + lbl.Width
+    lblBottom = lbl.Top + lbl.Height
+
+    For Each ctrl In Me.Controls
+        If TypeName(ctrl) = "TextBox" Then
+            txtLeft = ctrl.Left
+            txtTop = ctrl.Top
+            txtRight = ctrl.Left + ctrl.Width
+            txtBottom = ctrl.Top + ctrl.Height
+
+            ' Check if the label overlaps the textbox
+            If Not (lblRight < txtLeft Or lblLeft > txtRight Or _
+                    lblBottom < txtTop Or lblTop > txtBottom) Then
+                Set GetTextBoxUnderLabel = ctrl
+                Exit Function
+            End If
+        End If
+    Next ctrl
+
+    ' If no match found
+    Set GetTextBoxUnderLabel = Nothing
+End Function
+
 
 Private Sub ComboBoxDate_DropButtonClick()
     UpdateDateWithCalendar ComboBoxDate
@@ -31,16 +80,8 @@ Private Sub ComboBoxDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal S
     TreatDateWithKeyboardEntry TextBox2, KeyCode
 End Sub
 
-Private Sub Image1_BeforeDragOver(ByVal Cancel As MSForms.ReturnBoolean, ByVal Data As MSForms.DataObject, ByVal X As Single, ByVal Y As Single, ByVal DragState As MSForms.fmDragState, ByVal Effect As MSForms.ReturnEffect, ByVal Shift As Integer)
-
-End Sub
-
 Private Sub LabelDate_Click()
     LabelDate.Caption = GetCalendarDate(LabelDate.Caption)
-End Sub
-
-Private Sub ListBox1_Click()
-
 End Sub
 
 Private Sub UserForm_Initialize()
@@ -64,8 +105,11 @@ Private Function GetCalendarDate(UserFormObjectValue As String) As String
     
     If DateSelected <> 0 Then
         
+        Dim DateFormat As String
+        DateFormat = GetDateFormat()
+        
         ' Force output the same as the date format
-        GetCalendarDate = CStr(DateSelected)
+        GetCalendarDate = Format(DateSelected, DateFormat)
     End If
  
 End Function
@@ -159,4 +203,5 @@ End Sub
 Private Sub TextBox2_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     ' Optional: Adjust selection to prevent selecting slashes
 End Sub
+
 
