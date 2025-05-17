@@ -179,7 +179,22 @@ Sub TreatDateWithKeyboardEntry( _
     
 End Sub
 
-Private Sub UpdateDateTextBox( _
+' Replaces the current selected date with the mask.
+' Imitates the deletion of the selected text
+Private Sub DeleteSelectedText(txtDate As MSForms.TextBox)
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelText
+    
+    With txtDate
+        .SelText = Mid(DATE_MASK, .SelStart + 1, .SelLength)
+    End With
+    
+    txtDate.SelText = TextCursorPosition
+    
+End Sub
+
+Private Sub EditDateTextBox( _
             txtDate As MSForms.TextBox, _
             KeyCode As MSForms.ReturnInteger)
     
