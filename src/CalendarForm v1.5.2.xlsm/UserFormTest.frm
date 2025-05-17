@@ -154,25 +154,35 @@ Sub TreatDateWithKeyboardEntry( _
             txtDate As MSForms.TextBox, _
             KeyCode As MSForms.ReturnInteger)
     
-    If KeyCode = vbKeyUp Or KeyCode = vbKeyDown Or KeyCode = vbKeyLeft Or KeyCode = vbKeyRight _
-           Or KeyCode = vbKeyEnd Or KeyCode = vbKeyHome Then
+    ' Keys with allowed standard behavior
+    If KeyCode = vbKeyLeft Or KeyCode = vbKeyRight Or KeyCode = vbKeyEnd Or KeyCode = vbKeyHome _
+                Or KeyCode = vbKeyControl Then
         Exit Sub
     End If
     
-    Dim KeyPosition As Byte
-    KeyPosition = txtDate.SelStart
+    ' Exit TextBox
+    If KeyCode = vbKeyTab Or KeyCode = vbKeyTab Or KeyCode = vbKeyUp Or KeyCode = vbKeyDown Or _
+            KeyCode = vbKeyReturn Or KeyCode = vbKeyEscape Or KeyCode = vbKeyE Then
+        Exit Sub
+    End If
     
-    ' TODO: ' Allow Delete
-    ' TODO: ' Allow Selection of part of the date = Replace all selected value with "_"
-    If KeyCode = vbKeyBack And KeyPosition > 0 Then
-        ' Allow Backspace
-        txtDate.Text = DateBackSpace(txtDate.Text, KeyPosition)
-        txtDate.SelStart = WorksheetFunction.Max(0, KeyPosition - 1)
+    If txtDate.SelLength > 1 Then
+        DeleteSelectedText txtDate
+        
+        ' As text already deleted, stop execution
+        If KeyCode = vbKeyBack Or KeyCode = vbKeyDelete Then GoTo ExitProcedure
+    End If
+    
+    If KeyCode = vbKeyBack Then
+        DeleteLeftTextBox txtDate
+    ElseIf KeyCode = vbKeyDelete Then
+        DeleteRightTextBox txtDate
     ElseIf (KeyCode >= vbKey0 And KeyCode <= vbKey9) _
             Or (KeyCode >= vbKeyNumpad0 And KeyCode <= vbKeyNumpad9) Then
-        ' Allow numbers
-        UpdateDateTextBox txtDate, KeyCode
+        EditDateTextBox txtDate, KeyCode
     End If
+    
+ExitProcedure:
     
     ' Cancel any key update
     KeyCode = 0
