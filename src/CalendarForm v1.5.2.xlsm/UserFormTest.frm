@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} UserFormTest 
    Caption         =   "UserForm1"
-   ClientHeight    =   4459
-   ClientLeft      =   -189
-   ClientTop       =   -826
-   ClientWidth     =   7602
+   ClientHeight    =   2695
+   ClientLeft      =   -399
+   ClientTop       =   -1750
+   ClientWidth     =   8750.001
    OleObjectBlob   =   "UserFormTest.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -15,9 +15,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-'Private Sub CalendarImageLabel_Click()
-'    UpdateDateWithCalendar TextBox2
-'End Sub
 Private controlHooks As Collection
 
 Private Const DATE_MASK As String = "__/__/____"
