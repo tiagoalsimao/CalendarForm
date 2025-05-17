@@ -188,3 +188,70 @@ Public Function DateBackSpace( _
     
 End Function
 
+Private Sub TestDeleteKey()
+
+    Debug.Print DateDeleteRight("1_/__/____", 0) = "__/__/____"
+    Debug.Print DateDeleteRight("12/__/____", 1) = "1_/__/____"
+    
+    Debug.Print DateDeleteRight("05/__/____", 0) = "_5/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateDeleteRight("31/__/____", 1) = "3_/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateDeleteRight("01/__/____", 1) = "0_/__/____"
+    
+    Debug.Print DateDeleteRight("__/1_/____", 2) = "__/__/____"
+    Debug.Print DateDeleteRight("__/1_/____", 3) = "__/__/____"
+    Debug.Print DateDeleteRight("__/_3/____", 4) = "__/__/____"
+    Debug.Print DateDeleteRight("__/__/____", 4) = "__/__/____"
+    Debug.Print DateDeleteRight("__/01/____", 4) = "__/0_/____"
+    Debug.Print DateDeleteRight("__/12/____", 4) = "__/1_/____"
+    Debug.Print DateDeleteRight("__/34/____", 3) = "__/_4/____" 'adds leading zero as cannot have months above 12
+    
+    Debug.Print DateDeleteRight("__/__/1___", 5) = "__/__/____"
+    Debug.Print DateDeleteRight("__/__/1___", 6) = "__/__/____"
+    Debug.Print DateDeleteRight("__/__/12__", 7) = "__/__/1___"
+    Debug.Print DateDeleteRight("__/__/123_", 8) = "__/__/12__"
+    Debug.Print DateDeleteRight("__/__/1234", 9) = "__/__/123_"
+    
+    Debug.Print DateDeleteRight("1_/__/1234", 10) = "1_/__/1234"
+    
+    Debug.Print DateDeleteRight("31/12/2025", 0) = "_1/12/2025"
+    
+End Sub
+
+' Processes Delete Key
+Public Sub DeleteRightTextBox(ByRef txtDate As MSForms.TextBox)
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+
+    Dim CurrentDate As String
+    CurrentDate = txtDate.Text
+
+    DateDeleteRight CurrentDate, TextCursorPosition
+
+    txtDate.Text = CurrentDate
+    txtDate.SelStart = TextCursorPosition
+    
+End Sub
+
+' Processes Delete Key
+Public Function DateDeleteRight( _
+            ByRef CurrentDate As String, _
+            ByRef TextCursorPosition As Byte) As String
+    
+    ' No Change on Last Position
+    If TextCursorPosition > 9 Then GoTo ExitProcedure
+    
+    ' Move one char to the right if Char Position falls in Date Separator
+    If TextCursorPosition = 2 Or TextCursorPosition = 5 Then TextCursorPosition = TextCursorPosition + 1
+    
+    Dim NewDate As String
+    NewDate = CurrentDate
+    Mid(NewDate, TextCursorPosition + 1, 1) = "_"
+    
+    CurrentDate = NewDate
+    
+ExitProcedure:
+
+    DateDeleteRight = CurrentDate
+    
+End Function
