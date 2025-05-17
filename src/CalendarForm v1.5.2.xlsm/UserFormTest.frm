@@ -18,6 +18,11 @@ Option Explicit
 'Private Sub CalendarImageLabel_Click()
 '    UpdateDateWithCalendar TextBox2
 'End Sub
+Private controlHooks As Collection
+
+Private Const DATE_MASK As String = "__/__/____"
+Private Const DATE_SEPARATOR As String = "/"
+
 
 Private Sub CalendarImageLabel_Click()
     UpdateDateFromLabelClick CalendarImageLabel
