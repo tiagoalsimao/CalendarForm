@@ -112,6 +112,21 @@ Private Sub LabelDate_Click()
     LabelDate.Caption = GetCalendarDate(LabelDate.Caption)
 End Sub
 
+Private Sub TextBox2_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+    ValidateDate Me.ActiveControl
+End Sub
+
+Private Sub ValidateDate(txtDate As MSForms.TextBox)
+
+    If Not IsDate(txtDate) Then
+        MsgBox "The date '" & txtDate.Text & "' is not valid"
+        Exit Sub
+    End If
+    
+    txtDate.value = txtDate.Text
+    
+End Sub
+
 Private Sub UserForm_Initialize()
     HookEscapeKey Me
     ComboBoxDate.value = Date
