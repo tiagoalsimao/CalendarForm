@@ -23,6 +23,29 @@ Private controlHooks As Collection
 Private Const DATE_MASK As String = "__/__/____"
 Private Const DATE_SEPARATOR As String = "/"
 
+Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
+    
+    Dim DateSeparatorCount As Byte
+    DateSeparatorCount = 0
+    
+    Dim CurrentCharPosition As Byte
+    For CurrentCharPosition = 1 To Len(DATE_MASK)
+        Dim CurrentChar As String
+        CurrentChar = Mid(DATE_MASK, 1, 1)
+        
+        If CurrentChar = DATE_SEPARATOR Then
+            DateSeparatorCount = DateSeparatorCount + 1
+            
+            If DateSeparatorCount = SeparatorRank Then
+                GetDateSeparatorPosition = CurrentCharPosition
+                Exit Function
+            End If
+        End If
+    Next
+    
+    GetDateSeparatorPosition = -1
+    
+End Function
 
 Private Sub CalendarImageLabel_Click()
     UpdateDateFromLabelClick CalendarImageLabel
