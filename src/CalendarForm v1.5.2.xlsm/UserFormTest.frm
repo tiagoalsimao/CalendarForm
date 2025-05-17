@@ -212,19 +212,19 @@ Private Sub EditDateTextBox( _
         Dim TextDate As String
         TextDate = .Text
         
-        Dim KeyPosition As Byte
-        KeyPosition = .SelStart + 1
+        Dim TextCursorPosition As Byte
+        TextCursorPosition = .SelStart + 1
         
         Dim InputNumber As Byte
         InputNumber = GetDigitFromKeyCode(KeyCode)
         
-        UpdateDate TextDate, KeyPosition, InputNumber
+        DateEdit TextDate, TextCursorPosition, InputNumber
         
         ' Skip Date Separator
-        If KeyPosition = 2 Or KeyPosition = 5 Then KeyPosition = KeyPosition + 1
+        If TextCursorPosition = 2 Or TextCursorPosition = 5 Then TextCursorPosition = TextCursorPosition + 1
         
         .Text = TextDate
-        .SelStart = KeyPosition
+        .SelStart = TextCursorPosition
     End With
     
 End Sub
