@@ -137,54 +137,72 @@ Public Function UpdateDate( _
     
 End Function
 
-Private Sub TestDateBackSpace()
-    Debug.Print DateBackSpace("1_/__/____", 1) = "__/__/____"
-    Debug.Print DateBackSpace("12/__/____", 2) = "1_/__/____"
+Private Sub TestDateDeleteLeft()
+
+    Debug.Print DateDeleteLeft("1_/__/____", 1) = "__/__/____"
+    Debug.Print DateDeleteLeft("12/__/____", 2) = "1_/__/____"
     
-    Debug.Print DateBackSpace("05/__/____", 1) = "_5/__/____" 'adds leading zero as cannot have days above 31
-    Debug.Print DateBackSpace("31/__/____", 2) = "3_/__/____" 'adds leading zero as cannot have days above 31
-    Debug.Print DateBackSpace("01/__/____", 2) = "0_/__/____"
+    Debug.Print DateDeleteLeft("05/__/____", 1) = "_5/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateDeleteLeft("31/__/____", 2) = "3_/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateDeleteLeft("01/__/____", 2) = "0_/__/____"
     
-    Debug.Print DateBackSpace("_1/__/____", 3) = "__/__/____"
-    Debug.Print DateBackSpace("__/1_/____", 4) = "__/__/____"
-    Debug.Print DateBackSpace("__/_3/____", 5) = "__/__/____"
-    Debug.Print DateBackSpace("__/__/____", 5) = "__/__/____"
-    Debug.Print DateBackSpace("__/01/____", 5) = "__/0_/____"
-    Debug.Print DateBackSpace("__/12/____", 5) = "__/1_/____"
-    Debug.Print DateBackSpace("__/34/____", 4) = "__/_4/____" 'adds leading zero as cannot have months above 12
+    Debug.Print DateDeleteLeft("_1/__/____", 3) = "__/__/____"
+    Debug.Print DateDeleteLeft("__/1_/____", 4) = "__/__/____"
+    Debug.Print DateDeleteLeft("__/_3/____", 5) = "__/__/____"
+    Debug.Print DateDeleteLeft("__/__/____", 5) = "__/__/____"
+    Debug.Print DateDeleteLeft("__/01/____", 5) = "__/0_/____"
+    Debug.Print DateDeleteLeft("__/12/____", 5) = "__/1_/____"
+    Debug.Print DateDeleteLeft("__/34/____", 4) = "__/_4/____" 'adds leading zero as cannot have months above 12
     
-    Debug.Print DateBackSpace("__/_1/____", 6) = "__/__/____"
-    Debug.Print DateBackSpace("__/__/1___", 7) = "__/__/____"
-    Debug.Print DateBackSpace("__/__/12__", 8) = "__/__/1___"
-    Debug.Print DateBackSpace("__/__/123_", 9) = "__/__/12__"
-    Debug.Print DateBackSpace("__/__/1234", 10) = "__/__/123_"
+    Debug.Print DateDeleteLeft("__/_1/____", 6) = "__/__/____"
+    Debug.Print DateDeleteLeft("__/__/1___", 7) = "__/__/____"
+    Debug.Print DateDeleteLeft("__/__/12__", 8) = "__/__/1___"
+    Debug.Print DateDeleteLeft("__/__/123_", 9) = "__/__/12__"
+    Debug.Print DateDeleteLeft("__/__/1234", 10) = "__/__/123_"
     
-    Debug.Print DateBackSpace("1_/__/1234", 0) = "1_/__/1234"
+    Debug.Print DateDeleteLeft("1_/__/1234", 0) = "1_/__/1234"
     
-    Debug.Print DateBackSpace("31/12/2025", 1) = "_1/12/2025"
+    Debug.Print DateDeleteLeft("31/12/2025", 1) = "_1/12/2025"
     
 End Sub
 
-Public Function DateBackSpace( _
+' Processes BackSpace Key
+Public Sub DeleteLeftTextBox(ByRef txtDate As MSForms.TextBox)
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+        
+    Dim CurrentDate As String
+    CurrentDate = txtDate.Text
+    
+    DateDeleteLeft CurrentDate, TextCursorPosition
+    
+    txtDate.Text = CurrentDate
+    txtDate.SelStart = TextCursorPosition
+    
+End Sub
+
+' Processes BackSpace Key
+Public Function DateDeleteLeft( _
             ByRef CurrentDate As String, _
-            CharPosition As Byte) As String
-            
-    ' Move one char to the rigth if Char Position falls in Date Separator
-    If CharPosition = 3 Or CharPosition = 6 Then CharPosition = CharPosition - 1
+            ByRef TextCursorPosition As Byte) As String
     
-    ' Change last position
-    If CharPosition < 1 Then
-        DateBackSpace = CurrentDate
-        Exit Function
-    End If
+    ' No Change on First Position
+    If TextCursorPosition < 1 Then GoTo ExitProcedure
     
-    Dim TempDate As String
-    TempDate = CurrentDate
-    Mid(TempDate, CharPosition, 1) = "_"
+    ' Move one char to the right if Char Position falls in Date Separator
+    If TextCursorPosition = 3 Or TextCursorPosition = 6 Then TextCursorPosition = TextCursorPosition - 1
     
-    DateBackSpace = TempDate
+    Dim EditedDate As String
+    EditedDate = CurrentDate
+    Mid(EditedDate, TextCursorPosition, 1) = "_"
     
-    CurrentDate = DateBackSpace
+    CurrentDate = EditedDate
+    TextCursorPosition = WorksheetFunction.Max(0, TextCursorPosition - 1)
+    
+ExitProcedure:
+
+    DateDeleteLeft = CurrentDate
     
 End Function
 
