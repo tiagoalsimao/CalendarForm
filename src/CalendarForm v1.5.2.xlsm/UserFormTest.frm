@@ -113,9 +113,28 @@ Private Sub LabelDate_Click()
 End Sub
 
 Private Sub UserForm_Initialize()
+    HookEscapeKey Me
     ComboBoxDate.value = Date
     txtDate.value = Date
     LabelDate.Caption = Date
+End Sub
+
+
+Private Sub HookEscapeKey(pForm As MSForms.UserForm)
+    
+    Set controlHooks = New Collection
+    
+    Dim ctrl As Control
+    For Each ctrl In pForm.Controls
+        Select Case TypeName(ctrl)
+            Case "TextBox" ', "ComboBox", "ListBox" ' Only controls that support KeyDown
+                
+                Dim hook As UserFormEscapeKeyClass
+                Set hook = New UserFormEscapeKeyClass
+                hook.Initialize ctrl, pForm
+                controlHooks.Add hook
+        End Select
+    Next
 End Sub
 
 Private Function GetCalendarDate(UserFormObjectValue As String) As String
