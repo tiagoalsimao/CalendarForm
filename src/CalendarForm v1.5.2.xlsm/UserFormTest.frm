@@ -247,9 +247,9 @@ End Sub
 Private Sub SetDateMask(txtDate As MSForms.TextBox)
     ' Set initial mask if empty
     If txtDate.Text = "" Then
-        txtDate.Text = "__/__/____"
+        txtDate.Text = DATE_MASK
         txtDate.SelStart = 0
-        txtDate.SelLength = 2
+'        txtDate.SelLength = 0
     End If
 End Sub
 
