@@ -127,9 +127,9 @@ Private Function GetCalendarDate(UserFormObjectValue As String) As String
         Dim CurrentDate As Date
         CurrentDate = CDate(CurrentDateVariant)
     End If
-         
+    
     Dim DateSelected
-    DateSelected = CalendarForm.GetDate(CurrentDate, Monday, , , , , True, False, True, FirstFourDays, TodayFontColor:=255)
+    DateSelected = CalendarForm.GetDate(CurrentDate, Monday, , , , , True, False, True, FirstFourDays, TodayFontColor:=vbRed)
     
     If DateSelected <> 0 Then
         
