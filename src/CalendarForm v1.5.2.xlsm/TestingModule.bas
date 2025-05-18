@@ -11,7 +11,6 @@ Sub BasicCalendar()
     If dateVariable <> 0 Then Range("H16") = dateVariable
 End Sub
 
-
 Sub AdvancedCalendar()
     dateVariable = calendarForm.GetDate( _
         SelectedDate:=Range("H34").Value, _
@@ -306,9 +305,11 @@ Public Function DateDeleteRight( _
     ' Move one char to the right if Char Position falls in Date Separator
     If TextCursorPosition = 2 Or TextCursorPosition = 5 Then TextCursorPosition = TextCursorPosition + 1
     
+    TextCursorPosition = TextCursorPosition + 1
+    
     Dim NewDate As String
     NewDate = CurrentDate
-    Mid(NewDate, TextCursorPosition + 1, 1) = "_"
+    Mid(NewDate, TextCursorPosition, 1) = "_"
     
     CurrentDate = NewDate
     
