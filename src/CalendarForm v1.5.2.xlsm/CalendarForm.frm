@@ -825,13 +825,13 @@ End Sub
 ' If you want the functionality described above, of returning the selected date or
 ' initial date if the user cancels, you can un-comment this sub.
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
-'    If CloseMode = 0 Then
-'        Cancel = True
-'        DateOut = SelectedDateIn
-'        Me.Hide
-'    End If
-'End Sub
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+    If CloseMode = 0 Then
+        Cancel = True
+        DateOut = SelectedDateIn
+        Me.Hide
+    End If
+End Sub
 
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
