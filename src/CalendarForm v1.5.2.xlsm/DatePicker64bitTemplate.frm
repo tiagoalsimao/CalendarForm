@@ -17,9 +17,11 @@ Option Explicit
 
 Private InitialDate As Date
 
-Private Type ScreenPosition
+Private Type ObjectPosition
     Top As Single
     Left As Single
+    Bottom As Single
+    Right As Single
 End Type
 
 ' *** Procedures to Update for each New Date Picker ***
@@ -66,29 +68,33 @@ Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
     
 End Sub
 
+Private Function GetObjectPosition(ctrl As MSForms.Control) As ObjectPosition
+
+    With GetObjectPosition
+        .Left = ctrl.Left
+        .Top = ctrl.Top
+        .Right = ctrl.Left + ctrl.Width
+        .Bottom = ctrl.Top + ctrl.Height
+    End With
+    
+End Function
+
 Function GetTextBoxUnderControl(lbl As MSForms.Control) As MSForms.TextBox
     
-    Dim lblLeft As Double, lblTop As Double, lblRight As Double, lblBottom As Double
-    lblLeft = lbl.Left
-    lblTop = lbl.Top
-    lblRight = lbl.Left + lbl.Width
-    lblBottom = lbl.Top + lbl.Height
+    Dim lblPosition As ObjectPosition
+    lblPosition = GetObjectPosition(lbl)
     
     Dim ctrl As MSForms.Control
     For Each ctrl In Me.Controls
     
         If TypeName(ctrl) = "TextBox" Then
         
-            Dim txtLeft As Double, txtTop As Double, txtRight As Double, txtBottom As Double
-            
-            txtLeft = ctrl.Left
-            txtTop = ctrl.Top
-            txtRight = ctrl.Left + ctrl.Width
-            txtBottom = ctrl.Top + ctrl.Height
+            Dim TextBoxPosition As ObjectPosition
+            TextBoxPosition = GetObjectPosition(ctrl)
 
             ' Check if the label overlaps the textbox
-            If Not (lblRight < txtLeft Or lblLeft > txtRight Or _
-                    lblBottom < txtTop Or lblTop > txtBottom) Then
+            If Not (lblPosition.Right < TextBoxPosition.Left Or lblPosition.Left > TextBoxPosition.Right Or _
+                    lblPosition.Bottom < TextBoxPosition.Top Or lblPosition.Top > TextBoxPosition.Bottom) Then
                 Set GetTextBoxUnderControl = ctrl
                 Exit Function
             End If
@@ -105,7 +111,7 @@ Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
     Dim InitialTextDate As String
     InitialTextDate = txtDate.Text
     
-    Dim CalendarTopLeftPosition As ScreenPosition
+    Dim CalendarTopLeftPosition As ObjectPosition
     CalendarTopLeftPosition = GetPopupPosition(txtDate, Me)
     
     Dim InitialDate As Date
@@ -116,7 +122,7 @@ Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
     End If
     
     Dim DateSelected As Date
-    DateSelected = calendarForm.GetDate(InitialDate, Monday, , , , , True, False, True, _
+    DateSelected = CalendarForm.GetDate(InitialDate, Monday, , , , , True, False, True, _
             FirstFourDays, CalendarTopLeftPosition.Top, CalendarTopLeftPosition.Left, TodayFontColor:=vbRed)
     
     If DateSelected = 0 Then
@@ -134,12 +140,12 @@ End Sub
 ' ParentUserForm must be an object to allow getting the window position .Top and .Left, not available in MSForms.UserForm
 Private Function GetPopupPosition( _
             ctrl As MSForms.Control, _
-            ParentUserForm As Object) As ScreenPosition
+            ParentUserForm As Object) As ObjectPosition
     
     Const Margin As Single = 5
     Const CaptionHeigh As Single = 20
 
-    Dim pos As ScreenPosition
+    Dim pos As ObjectPosition
     pos.Left = ParentUserForm.Left + ctrl.Left + ctrl.Width + Margin
     pos.Top = ParentUserForm.Top + CaptionHeigh + ctrl.Top
 
@@ -437,3 +443,4 @@ Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
     GetDateSeparatorPosition = -1
     
 End Function
+

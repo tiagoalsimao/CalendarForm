@@ -7,12 +7,12 @@ Sub TestUserForm()
 End Sub
 
 Sub BasicCalendar()
-    dateVariable = calendarForm.GetDate
+    dateVariable = CalendarForm.GetDate
     If dateVariable <> 0 Then Range("H16") = dateVariable
 End Sub
 
 Sub AdvancedCalendar()
-    dateVariable = calendarForm.GetDate( _
+    dateVariable = CalendarForm.GetDate( _
         SelectedDate:=Range("H34").Value, _
         FirstDayOfWeek:=Monday, _
         DateFontSize:=12, _
@@ -37,7 +37,7 @@ End Sub
 
 
 Sub AdvancedCalendar2()
-    dateVariable = calendarForm.GetDate( _
+    dateVariable = CalendarForm.GetDate( _
         SelectedDate:=Range("H61").Value, _
         DateFontSize:=11, _
         TodayButton:=True, _
