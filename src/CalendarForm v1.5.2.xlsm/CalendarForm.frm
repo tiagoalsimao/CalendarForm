@@ -182,11 +182,11 @@ Private lblDateSunColor As Long             'Font color of Sunday date labels
 '   FirstWeekOfYear (calFirstWeekOfYear) - Sets the behavior of the week numbers. See
 '       the calFirstWeekOfYear Enum in the Global Variables section to see the possible
 '       values and their behavior.
-'   PositionTop (Long) - Sets the top position of the CalendarForm. If no value is
+'   PositionTop (Single) - Sets the top position of the CalendarForm. If no value is
 '       assigned, the CalendarForm is set to position 1 - CenterOwner. Note that
 '       PositionTop and PositionLeft must BOTH be set in order to override the default
 '       center position.
-'   PositionLeft (Long) - Sets the left position of the CalendarForm. If no value is
+'   PositionLeft (Single) - Sets the left position of the CalendarForm. If no value is
 '       assigned, the CalendarForm is set to position 1 - CenterOwner. Note that
 '       PositionTop and PositionLeft must BOTH be set in order to override the default
 '       center position.
@@ -225,7 +225,7 @@ Public Function GetDate( _
             Optional DateFontSize As Long = 9, _
             Optional TodayButton As Boolean = False, Optional OkayButton As Boolean = False, _
             Optional ShowWeekNumbers As Boolean = False, Optional FirstWeekOfYear As calFirstWeekOfYear = FirstJan1, _
-            Optional PositionTop As Long = -5, Optional PositionLeft As Long = -5, _
+            Optional PositionTop As Single = -5, Optional PositionLeft As Single = -5, _
             Optional BackgroundColor As Long = 16777215, _
             Optional HeaderColor As Long = 15658734, _
             Optional HeaderFontColor As Long = 0, _
@@ -288,8 +288,8 @@ Private Sub InitializeUserform( _
             MinimumDate As Date, _
             MaximumDate As Date, _
             RangeOfYears As Long, _
-            PositionTop As Long, _
-            PositionLeft As Long, _
+            PositionTop As Single, _
+            PositionLeft As Single, _
             SizeFont As Long, _
             bWeekNumbers As Boolean, _
             BackgroundColor As Long, _
