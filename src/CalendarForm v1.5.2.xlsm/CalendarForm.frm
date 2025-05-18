@@ -716,9 +716,38 @@ Private Sub InitializeUserform( _
     'Set month and year labels in header, as well as date labels
     Call SetMonthYear(SelectedMonth, SelectedYear)
     Call SetDays(SelectedMonth, SelectedYear, SelectedDay)
+    
+    FixUserFormPosition Me
+    
 End Sub
 
+' Avoid calendar going out of the screen
+Public Sub FixUserFormPosition(frm As Object)
+    
+    ' Get Excel's usable screen area
+    Dim ScreenWidth As Long
+    Dim ScreenHeight As Long
+    ScreenWidth = Application.UsableWidth
+    ScreenHeight = Application.UsableHeight
+    
+    ' Get the form's size
+    Dim FormWidth As Long
+    Dim FormHeight As Long
+    FormWidth = frm.Width
+    FormHeight = frm.Height
 
+    ' Adjust Left position
+    If frm.Left + FormWidth > ScreenWidth Then
+        frm.Left = ScreenWidth - FormWidth
+    End If
+    If frm.Left < 0 Then frm.Left = 0
+
+    ' Adjust Top position
+    If frm.Top + FormHeight > ScreenHeight Then
+        frm.Top = ScreenHeight - FormHeight
+    End If
+    If frm.Top < 0 Then frm.Top = 0
+End Sub
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' cmdOkay_Click

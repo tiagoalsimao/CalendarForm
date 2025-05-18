@@ -14,7 +14,7 @@ End Sub
 
 Sub AdvancedCalendar()
     dateVariable = calendarForm.GetDate( _
-        SelectedDate:=Range("H34").value, _
+        SelectedDate:=Range("H34").Value, _
         FirstDayOfWeek:=Monday, _
         DateFontSize:=12, _
         TodayButton:=True, _
@@ -39,7 +39,7 @@ End Sub
 
 Sub AdvancedCalendar2()
     dateVariable = calendarForm.GetDate( _
-        SelectedDate:=Range("H61").value, _
+        SelectedDate:=Range("H61").Value, _
         DateFontSize:=11, _
         TodayButton:=True, _
         BackgroundColor:=RGB(242, 248, 238), _
