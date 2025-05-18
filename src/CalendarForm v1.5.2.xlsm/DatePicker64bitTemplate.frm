@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} DatePicker64bitTemplate 
    Caption         =   "DatePicker64bitTemplate"
-   ClientHeight    =   1246
+   ClientHeight    =   1428
    ClientLeft      =   -399
    ClientTop       =   -1750
    ClientWidth     =   2800
@@ -15,40 +15,11 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-#If VBA7 Then
-    Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" ( _
-            ByVal lpClassName As String, _
-            ByVal lpWindowName As String) As LongPtr
-    
-    Private Declare PtrSafe Function ClientToScreen Lib "user32" ( _
-            ByVal hwnd As LongPtr, _
-            lpPoint As POINTAPI) As Long
-#Else
-    Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" ( _
-            ByVal lpClassName As String, _
-            ByVal lpWindowName As String) As Long
-    
-    Private Declare Function ClientToScreen Lib "user32" ( _
-            ByVal hWnd As Long, _
-            lpPoint As POINTAPI) As Long
-#End If
+Private InitialDate As Date
 
-Private Declare PtrSafe Function GetDC Lib "user32" (ByVal hwnd As LongPtr) As LongPtr
-Private Declare PtrSafe Function GetDeviceCaps Lib "gdi32" (ByVal hdc As LongPtr, ByVal nIndex As Long) As Long
-Private Declare PtrSafe Function ReleaseDC Lib "user32" (ByVal hwnd As LongPtr, ByVal hdc As LongPtr) As Long
-
-Private Const LOGPIXELSX As Long = 88
-Private Const LOGPIXELSY As Long = 90
-Private Const TWIPS_PER_INCH As Long = 1440
-
-Private Type POINTAPI
-    X As Long
-    Y As Long
-End Type
-
-Private Type FormPosition
-    Top As Long
-    Left As Long
+Private Type ScreenPosition
+    Top As Single
+    Left As Single
 End Type
 
 Private controlHooks As Collection
@@ -95,7 +66,7 @@ Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
     
 End Sub
 
-Function GetTextBoxUnderLabel(lbl As MSForms.Label) As MSForms.TextBox
+Function GetTextBoxUnderLabel(lbl As MSForms.Control) As MSForms.TextBox
     
     Dim lblLeft As Double, lblTop As Double, lblRight As Double, lblBottom As Double
     lblLeft = lbl.Left
@@ -130,12 +101,12 @@ Function GetTextBoxUnderLabel(lbl As MSForms.Label) As MSForms.TextBox
 End Function
 
 Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
-
+    
     Dim InitialTextDate As String
     InitialTextDate = txtDate.Text
     
-    Dim CalendarTopLeftPosition As FormPosition
-    CalendarTopLeftPosition = GetPopupPosition(txtDate, calendarForm)
+    Dim CalendarTopLeftPosition As ScreenPosition
+    CalendarTopLeftPosition = GetPopupPosition(txtDate, Me)
     
     Dim InitialDate As Date
     If IsDate(InitialTextDate) Then
@@ -160,84 +131,62 @@ Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
     
 End Sub
 
-Private Function GetPopupPosition(ctrl As MSForms.Control, calendarForm As Object) As FormPosition
+' ParentUserForm must be an object to allow getting the window position .Top and .Left, not available in MSForms.UserForm
+Private Function GetPopupPosition( _
+            ctrl As MSForms.Control, _
+            ParentUserForm As Object) As ScreenPosition
     
-    Dim hwnd As LongPtr
-    hwnd = FindWindow("ThunderDFrame", ctrl.Parent.Caption)
-    
-    Dim pt As POINTAPI
-    ClientToScreen hwnd, pt
+    Const Margin As Single = 5
+    Const CaptionHeigh As Single = 20
 
-    ' Convert to pixels using custom functions
-    
-    Dim lLeft As Long, lTop As Long
-    lLeft = TwipsToPixelsX(ctrl.Left)
-    lTop = TwipsToPixelsY(ctrl.Top)
-    
-    Dim pos As FormPosition
-    pos.Left = pt.X + lLeft + TwipsToPixelsX(ctrl.Width)
-    pos.Top = pt.Y + lTop
+    Dim pos As ScreenPosition
+    pos.Left = ParentUserForm.Left + ctrl.Left + ctrl.Width + Margin
+    pos.Top = ParentUserForm.Top + CaptionHeigh + ctrl.Top
 
     GetPopupPosition = pos
-    
 End Function
 
-Public Function TwipsToPixelsX(twips As Single) As Long
-    Dim hdc As LongPtr
-    Dim dpiX As Long
-    hdc = GetDC(0)
-    dpiX = GetDeviceCaps(hdc, LOGPIXELSX)
-    ReleaseDC 0, hdc
-    TwipsToPixelsX = twips * dpiX / TWIPS_PER_INCH
-End Function
-
-Public Function TwipsToPixelsY(twips As Single) As Long
-    Dim hdc As LongPtr
-    Dim dpiY As Long
-    hdc = GetDC(0)
-    dpiY = GetDeviceCaps(hdc, LOGPIXELSY)
-    ReleaseDC 0, hdc
-    TwipsToPixelsY = twips * dpiY / TWIPS_PER_INCH
-End Function
-
-Private Sub DatePicker64bit_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+Private Sub DatePicker64bitTextBox_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
     ValidateDate Me.ActiveControl
 End Sub
 
 Private Sub ValidateDate(txtDate As MSForms.TextBox)
 
-    If Not IsDate(txtDate) Then
-        MsgBox "The date '" & txtDate.Text & "' is not valid"
+    If Not IsDate(txtDate.Text) Then
+        MsgBox "The date '" & txtDate.Text & "' is not valid. Reverting to " & txtDate.BoundValue
+        txtDate.Value = txtDate.BoundValue
+    Else
+        txtDate.Value = txtDate.Text
+    End If
+    
+End Sub
+
+Private Sub SpinButton1_SpinDown()
+    SpinDate1Day Me.ActiveControl, -1
+End Sub
+
+Private Sub SpinButton1_SpinUp()
+    SpinDate1Day Me.ActiveControl, 1
+End Sub
+
+Private Sub SpinDate1Day( _
+            SpinButton As MSForms.SpinButton, _
+            DeltaDay As Single)
+        
+    Dim txt As MSForms.TextBox
+    Set txt = GetTextBoxUnderLabel(SpinButton)
+    
+    If txt Is Nothing Then
+        MsgBox "No matching TextBox found under Label1."
         Exit Sub
     End If
     
-    txtDate.value = txtDate.Text
+    txt.Value = CStr(CDate(txt.Value) + DeltaDay)
     
 End Sub
 
-Private Sub UserForm_Initialize()
-    HookEscapeKey Me
-End Sub
-
-Private Sub HookEscapeKey(pForm As MSForms.UserForm)
-    
-    Set controlHooks = New Collection
-    
-    Dim ctrl As Control
-    For Each ctrl In pForm.Controls
-        Select Case TypeName(ctrl)
-            Case "TextBox" ', "ComboBox", "ListBox" ' Only controls that support KeyDown
-                
-                Dim hook As UserFormEscapeKeyClass
-                Set hook = New UserFormEscapeKeyClass
-                hook.Initialize ctrl, pForm
-                controlHooks.Add hook
-        End Select
-    Next
-End Sub
-
-Private Sub DatePicker64bit_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
-    TreatDateWithKeyboardEntry DatePicker64bit, KeyCode
+Private Sub DatePicker64bitTextBox_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    TreatDateWithKeyboardEntry Me.ActiveControl, KeyCode
 End Sub
 
 Sub TreatDateWithKeyboardEntry( _
@@ -285,6 +234,176 @@ ExitProcedure:
     
 End Sub
 
+' Processes BackSpace Key
+Public Sub DeleteLeftTextBox(ByRef txtDate As MSForms.TextBox)
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+        
+    Dim CurrentDate As String
+    CurrentDate = txtDate.Text
+    
+    DateDeleteLeft CurrentDate, TextCursorPosition
+    
+    txtDate.Text = CurrentDate
+    txtDate.SelStart = TextCursorPosition
+    
+End Sub
+
+' Processes BackSpace Key
+Public Function DateDeleteLeft( _
+            ByRef CurrentDate As String, _
+            ByRef TextCursorPosition As Byte) As String
+    
+    ' No Change on First Position
+    If TextCursorPosition < 1 Then GoTo ExitProcedure
+    
+    ' Move one char to the right if Char Position falls in Date Separator
+    If TextCursorPosition = 3 Or TextCursorPosition = 6 Then TextCursorPosition = TextCursorPosition - 1
+    
+    Dim EditedDate As String
+    EditedDate = CurrentDate
+    Mid(EditedDate, TextCursorPosition, 1) = "_"
+    
+    CurrentDate = EditedDate
+    TextCursorPosition = WorksheetFunction.Max(0, TextCursorPosition - 1)
+    
+ExitProcedure:
+
+    DateDeleteLeft = CurrentDate
+    
+End Function
+
+' Processes Delete Key
+Public Sub DeleteRightTextBox(ByRef txtDate As MSForms.TextBox)
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+
+    Dim CurrentDate As String
+    CurrentDate = txtDate.Text
+
+    DateDeleteRight CurrentDate, TextCursorPosition
+
+    txtDate.Text = CurrentDate
+    txtDate.SelStart = TextCursorPosition
+    
+End Sub
+
+' Processes Delete Key
+Public Function DateDeleteRight( _
+            ByRef CurrentDate As String, _
+            ByRef TextCursorPosition As Byte) As String
+    
+    ' No Change on Last Position
+    If TextCursorPosition > 9 Then GoTo ExitProcedure
+    
+    ' Move one char to the right if Char Position falls in Date Separator
+    If TextCursorPosition = 2 Or TextCursorPosition = 5 Then TextCursorPosition = TextCursorPosition + 1
+    
+    TextCursorPosition = TextCursorPosition + 1
+    
+    Dim NewDate As String
+    NewDate = CurrentDate
+    Mid(NewDate, TextCursorPosition, 1) = "_"
+    
+    CurrentDate = NewDate
+    
+ExitProcedure:
+
+    DateDeleteRight = CurrentDate
+    
+End Function
+
+Public Sub EditDateTextBox( _
+            txtDate As MSForms.TextBox, _
+            KeyCode As MSForms.ReturnInteger)
+    
+    Dim TextDate As String
+    TextDate = txtDate.Text
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+    
+    Dim InputNumber As Byte
+    InputNumber = GetDigitFromKeyCode(KeyCode)
+    
+    DateEdit TextDate, TextCursorPosition, InputNumber
+    
+    txtDate.Text = TextDate
+    txtDate.SelStart = TextCursorPosition
+    
+End Sub
+
+Function GetDigitFromKeyCode(KeyCode As MSForms.ReturnInteger) As Byte
+    Select Case KeyCode
+        Case vbKey0 To vbKey9
+            GetDigitFromKeyCode = KeyCode - vbKey0
+        Case vbKeyNumpad0 To vbKeyNumpad9
+            GetDigitFromKeyCode = KeyCode - vbKeyNumpad0
+        Case Else
+            GetDigitFromKeyCode = -1 ' Not a digit
+    End Select
+End Function
+
+' Processes any numerical Key
+Public Function DateEdit( _
+            ByRef CurrentDate As String, _
+            ByRef TextCursorPosition As Byte, _
+            NewChar As Byte) As String
+    
+    If TextCursorPosition > 9 Then GoTo ExitProcedure
+    
+    ' Only allow digits to be inserted
+    If NewChar < 0 Or NewChar > 9 Then GoTo ExitProcedure
+    
+    ' Move one char to the rigth if Char Position falls in Date Separator
+    If TextCursorPosition = 2 Or TextCursorPosition = 5 Then TextCursorPosition = TextCursorPosition + 1
+    
+    ' Replace the character at TextCursorPosition
+    Dim NewDate As String
+    NewDate = CurrentDate
+    
+    ' Convert Tens to Units if: Day over 4 and Month over 1. Eg. Day = "5_" -> "05"
+    If (NewChar > 3 And TextCursorPosition = 0) Or (NewChar > 1 And TextCursorPosition = 3) Then
+        Mid(NewDate, TextCursorPosition + 1, 1) = 0
+        
+        TextCursorPosition = TextCursorPosition + 1
+    End If
+    
+    Mid(NewDate, TextCursorPosition + 1, 1) = CStr(NewChar)
+    
+    Dim DateArray As Variant
+    DateArray = Split(NewDate, DATE_SEPARATOR)
+    
+    ' Fix Day Maximum
+    Dim dayStr As String
+    dayStr = DateArray(0)
+    If IsNumeric(dayStr) Then
+        dayStr = Format(WorksheetFunction.Max(1, WorksheetFunction.Min(31, dayStr)), "00")
+    End If
+    
+    ' Fix Month Maximum
+    Dim monthStr As String
+    monthStr = DateArray(1)
+    If IsNumeric(monthStr) Then
+        monthStr = Format(WorksheetFunction.Max(1, WorksheetFunction.Min(12, monthStr)), "00")
+    End If
+    
+    Dim yearStr As String
+    yearStr = DateArray(2)
+    
+    CurrentDate = Join(Array(dayStr, monthStr, yearStr), "/")
+    
+    ' Move Text Curser one character right
+    TextCursorPosition = TextCursorPosition + 1
+    
+ExitProcedure:
+    
+    DateEdit = CurrentDate
+    
+End Function
+
 ' Replaces the current selected date with the mask.
 ' Imitates the deletion of the selected text
 Private Sub DeleteSelectedText(txtDate As MSForms.TextBox)
@@ -300,8 +419,8 @@ Private Sub DeleteSelectedText(txtDate As MSForms.TextBox)
     
 End Sub
 
-Private Sub DatePicker64bit_Enter()
-    SetDateMask DatePicker64bit
+Private Sub DatePicker64bitTextBox_Enter()
+    SetDateMask Me.ActiveControl
 End Sub
 
 Private Sub SetDateMask(txtDate As MSForms.TextBox)
@@ -312,4 +431,8 @@ Private Sub SetDateMask(txtDate As MSForms.TextBox)
     
     txtDate.SelStart = 0
     
+End Sub
+
+Private Sub UserForm_Click()
+
 End Sub
