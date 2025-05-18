@@ -1,16 +1,19 @@
 Attribute VB_Name = "TestingModule"
+Public Const DATE_MASK As String = "__/__/____"
+Public Const DATE_SEPARATOR As String = "/"
+
 Sub TestUserForm()
-    UserFormTest.Show
+    DatePicker64bitTemplate.Show
 End Sub
 
 Sub BasicCalendar()
-    dateVariable = CalendarForm.GetDate
+    dateVariable = calendarForm.GetDate
     If dateVariable <> 0 Then Range("H16") = dateVariable
 End Sub
 
 
 Sub AdvancedCalendar()
-    dateVariable = CalendarForm.GetDate( _
+    dateVariable = calendarForm.GetDate( _
         SelectedDate:=Range("H34").value, _
         FirstDayOfWeek:=Monday, _
         DateFontSize:=12, _
@@ -35,7 +38,7 @@ End Sub
 
 
 Sub AdvancedCalendar2()
-    dateVariable = CalendarForm.GetDate( _
+    dateVariable = calendarForm.GetDate( _
         SelectedDate:=Range("H61").value, _
         DateFontSize:=11, _
         TodayButton:=True, _
@@ -56,84 +59,125 @@ Sub AdvancedCalendar2()
     If dateVariable <> 0 Then Range("H61") = dateVariable
 End Sub
 
-Private Sub TestUpdateDate()
-    Debug.Print UpdateDate("__/__/____", 1, 1) = "1_/__/____"
-    Debug.Print UpdateDate("1_/__/____", 2, 2) = "12/__/____"
+Private Sub TestDateEdit()
+
+    Debug.Print DateEdit("__/__/____", 0, 1) = "1_/__/____"
+    Debug.Print DateEdit("1_/__/____", 1, 2) = "12/__/____"
     
-    Debug.Print UpdateDate("5_/__/____", 5, 1) = "05/__/____" 'adds leading zero as cannot have days above 31
-    Debug.Print UpdateDate("3_/__/____", 3, 2) = "31/__/____" 'adds leading zero as cannot have days above 31
-    Debug.Print UpdateDate("0_/__/____", 0, 2) = "01/__/____"
+    Debug.Print DateEdit("__/__/____", 0, 5) = "05/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateEdit("3_/__/____", 1, 3) = "31/__/____" 'adds leading zero as cannot have days above 31
+    Debug.Print DateEdit("__/__/____", 0, 0) = "0_/__/____"
+    Debug.Print DateEdit("0_/__/____", 1, 0) = "01/__/____"
     
-    Debug.Print UpdateDate("__/__/____", 1, 3) = "__/1_/____"
-    Debug.Print UpdateDate("__/__/____", 3, 5) = "__/_3/____"
-    Debug.Print UpdateDate("__/_3/____", 3, 5) = "__/_3/____"
-    Debug.Print UpdateDate("__/03/____", 3, 5) = "__/03/____"
-    Debug.Print UpdateDate("__/0_/____", 0, 5) = "__/01/____"
-    Debug.Print UpdateDate("__/33/____", 3, 5) = "__/12/____"
-    Debug.Print UpdateDate("__/__/____", 4, 4) = "__/04/____" 'adds leading zero as cannot have months above 12
+    Debug.Print DateEdit("__/__/____", 2, 1) = "__/1_/____"
+    Debug.Print DateEdit("__/__/____", 3, 1) = "__/1_/____"
+    Debug.Print DateEdit("__/__/____", 3, 3) = "__/03/____"
+    Debug.Print DateEdit("__/__/____", 3, 5) = "__/05/____"
+    Debug.Print DateEdit("__/_3/____", 3, 5) = "__/05/____"
+    Debug.Print DateEdit("__/03/____", 3, 5) = "__/05/____"
+    Debug.Print DateEdit("__/0_/____", 4, 0) = "__/01/____"
+    Debug.Print DateEdit("__/__/____", 4, 5) = "__/_5/____"
+    Debug.Print DateEdit("__/33/____", 4, 5) = "__/12/____"
+    Debug.Print DateEdit("__/__/____", 2, 4) = "__/04/____" 'adds leading zero as cannot have months above 12
+    Debug.Print DateEdit("__/__/____", 3, 4) = "__/04/____" 'adds leading zero as cannot have months above 12
     
-    Debug.Print UpdateDate("__/__/____", 1, 6) = "__/__/1___"
-    Debug.Print UpdateDate("__/__/____", 1, 7) = "__/__/1___"
-    Debug.Print UpdateDate("__/__/1___", 2, 8) = "__/__/12__"
-    Debug.Print UpdateDate("__/__/12__", 3, 9) = "__/__/123_"
-    Debug.Print UpdateDate("__/__/123_", 4, 10) = "__/__/1234"
-    Debug.Print UpdateDate("__/__/1234", 5, 11) = "__/__/1235"
+    Debug.Print DateEdit("__/__/____", 5, 1) = "__/__/1___"
+    Debug.Print DateEdit("__/__/____", 6, 1) = "__/__/1___"
+    Debug.Print DateEdit("__/__/1___", 7, 2) = "__/__/12__"
+    Debug.Print DateEdit("__/__/12__", 8, 3) = "__/__/123_"
+    Debug.Print DateEdit("__/__/123_", 9, 4) = "__/__/1234"
+    Debug.Print DateEdit("__/__/1234", 10, 5) = "__/__/1234"
     
-    Debug.Print UpdateDate("31/12/2025", 2, 11) = "31/12/2022"
+    Debug.Print DateEdit("31/12/2025", 10, 2) = "31/12/2025"
     
 End Sub
 
-Public Function UpdateDate( _
+Public Sub EditDateTextBox( _
+            txtDate As MSForms.TextBox, _
+            KeyCode As MSForms.ReturnInteger)
+    
+    Dim TextDate As String
+    TextDate = txtDate.Text
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+    
+    Dim InputNumber As Byte
+    InputNumber = GetDigitFromKeyCode(KeyCode)
+    
+    DateEdit TextDate, TextCursorPosition, InputNumber
+    
+    txtDate.Text = TextDate
+    txtDate.SelStart = TextCursorPosition
+    
+End Sub
+
+Function GetDigitFromKeyCode(KeyCode As MSForms.ReturnInteger) As Byte
+    Select Case KeyCode
+        Case vbKey0 To vbKey9
+            GetDigitFromKeyCode = KeyCode - vbKey0
+        Case vbKeyNumpad0 To vbKeyNumpad9
+            GetDigitFromKeyCode = KeyCode - vbKeyNumpad0
+        Case Else
+            GetDigitFromKeyCode = -1 ' Not a digit
+    End Select
+End Function
+
+' Processes any numerical Key
+Public Function DateEdit( _
             ByRef CurrentDate As String, _
-            ByRef CharPosition As Byte, _
+            ByRef TextCursorPosition As Byte, _
             NewChar As Byte) As String
     
+    If TextCursorPosition > 9 Then GoTo ExitProcedure
+    
     ' Only allow digits to be inserted
-    If NewChar < 0 Or NewChar > 9 Then
-        UpdateDate = CurrentDate
-        Exit Function
-    End If
+    If NewChar < 0 Or NewChar > 9 Then GoTo ExitProcedure
     
     ' Move one char to the rigth if Char Position falls in Date Separator
-    If CharPosition = 3 Or CharPosition = 6 Then CharPosition = CharPosition + 1
+    If TextCursorPosition = 2 Or TextCursorPosition = 5 Then TextCursorPosition = TextCursorPosition + 1
     
-    ' Change last position
-    If CharPosition > 10 Then CharPosition = 10
-    
-    ' Replace the character at CharPosition
-    Dim TempDate As String
-    TempDate = CurrentDate
+    ' Replace the character at TextCursorPosition
+    Dim NewDate As String
+    NewDate = CurrentDate
     
     ' Convert Tens to Units if: Day over 4 and Month over 1. Eg. Day = "5_" -> "05"
-    If (NewChar > 3 And CharPosition = 1) Or (NewChar > 1 And CharPosition = 4) Then
-        Mid(TempDate, CharPosition, 1) = 0
+    If (NewChar > 3 And TextCursorPosition = 0) Or (NewChar > 1 And TextCursorPosition = 3) Then
+        Mid(NewDate, TextCursorPosition + 1, 1) = 0
         
-        CharPosition = CharPosition + 1
-        Mid(TempDate, CharPosition, 1) = CStr(NewChar)
-    Else
-        Mid(TempDate, CharPosition, 1) = CStr(NewChar)
+        TextCursorPosition = TextCursorPosition + 1
     End If
+    
+    Mid(NewDate, TextCursorPosition + 1, 1) = CStr(NewChar)
+    
+    Dim DateArray As Variant
+    DateArray = Split(NewDate, DATE_SEPARATOR)
     
     ' Fix Day Maximum
     Dim dayStr As String
-    dayStr = Mid(TempDate, 1, 2)
+    dayStr = DateArray(0)
     If IsNumeric(dayStr) Then
         dayStr = Format(WorksheetFunction.Max(1, WorksheetFunction.Min(31, dayStr)), "00")
     End If
     
     ' Fix Month Maximum
     Dim monthStr As String
-    monthStr = Mid(TempDate, 4, 2)
+    monthStr = DateArray(1)
     If IsNumeric(monthStr) Then
         monthStr = Format(WorksheetFunction.Max(1, WorksheetFunction.Min(12, monthStr)), "00")
     End If
     
     Dim yearStr As String
-    yearStr = Mid(TempDate, 7, 4)
+    yearStr = DateArray(2)
     
-    UpdateDate = Join(Array(dayStr, monthStr, yearStr), "/")
+    CurrentDate = Join(Array(dayStr, monthStr, yearStr), "/")
     
-    CurrentDate = UpdateDate
+    ' Move Text Curser one character right
+    TextCursorPosition = TextCursorPosition + 1
+    
+ExitProcedure:
+    
+    DateEdit = CurrentDate
     
 End Function
 
