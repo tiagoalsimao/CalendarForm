@@ -22,40 +22,40 @@ Private Type ScreenPosition
     Left As Single
 End Type
 
-Private controlHooks As Collection
-
-Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
-    
-    Dim DateSeparatorCount As Byte
-    DateSeparatorCount = 0
-    
-    Dim CurrentCharPosition As Byte
-    For CurrentCharPosition = 1 To Len(DATE_MASK)
-        Dim CurrentChar As String
-        CurrentChar = Mid(DATE_MASK, 1, 1)
-        
-        If CurrentChar = DATE_SEPARATOR Then
-            DateSeparatorCount = DateSeparatorCount + 1
-            
-            If DateSeparatorCount = SeparatorRank Then
-                GetDateSeparatorPosition = CurrentCharPosition
-                Exit Function
-            End If
-        End If
-    Next
-    
-    GetDateSeparatorPosition = -1
-    
-End Function
-
-Private Sub CalendarImageLabel_Click()
-    UpdateDateFromLabelClick CalendarImageLabel
+' *** Procedures to Update for each New Date Picker ***
+Private Sub DatePicker64bitTextBox_Enter()
+    SetInitialDate Me.ActiveControl
 End Sub
 
+Private Sub DatePicker64bitSpinButton_SpinUp()
+    ChangeDateBy1Day Me.ActiveControl, 1
+End Sub
+
+Private Sub DatePicker64bitSpinButton_SpinDown()
+    ChangeDateBy1Day Me.ActiveControl, -1
+End Sub
+
+Private Sub DatePicker64bitTextBox_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    TreatDateWithKeyboardEntry Me.ActiveControl, KeyCode
+End Sub
+
+' Tabel is the only control where we need to specify the Label itself.
+' It its not possible to use Me.ActiveControl, as Labels are never active)
+Private Sub DatePicker64bitLabel_Click()
+    UpdateDateFromLabelClick DatePicker64bitLabel
+End Sub
+
+Private Sub DatePicker64bitTextBox_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+    ValidateDate Me.ActiveControl
+End Sub
+
+' *** ***
+
+' From the Label Click, get TextBox below control and lauch CalendarForm
 Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
 
     Dim txt As MSForms.TextBox
-    Set txt = GetTextBoxUnderLabel(CalendarLabel)
+    Set txt = GetTextBoxUnderControl(CalendarLabel)
 
     If txt Is Nothing Then
         MsgBox "No matching TextBox found under Label1."
@@ -66,7 +66,7 @@ Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
     
 End Sub
 
-Function GetTextBoxUnderLabel(lbl As MSForms.Control) As MSForms.TextBox
+Function GetTextBoxUnderControl(lbl As MSForms.Control) As MSForms.TextBox
     
     Dim lblLeft As Double, lblTop As Double, lblRight As Double, lblBottom As Double
     lblLeft = lbl.Left
@@ -89,14 +89,14 @@ Function GetTextBoxUnderLabel(lbl As MSForms.Control) As MSForms.TextBox
             ' Check if the label overlaps the textbox
             If Not (lblRight < txtLeft Or lblLeft > txtRight Or _
                     lblBottom < txtTop Or lblTop > txtBottom) Then
-                Set GetTextBoxUnderLabel = ctrl
+                Set GetTextBoxUnderControl = ctrl
                 Exit Function
             End If
         End If
     Next ctrl
 
     ' If no match found
-    Set GetTextBoxUnderLabel = Nothing
+    Set GetTextBoxUnderControl = Nothing
     
 End Function
 
@@ -146,10 +146,6 @@ Private Function GetPopupPosition( _
     GetPopupPosition = pos
 End Function
 
-Private Sub DatePicker64bitTextBox_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
-    ValidateDate Me.ActiveControl
-End Sub
-
 Private Sub ValidateDate(txtDate As MSForms.TextBox)
 
     If Not IsDate(txtDate.Text) Then
@@ -161,20 +157,12 @@ Private Sub ValidateDate(txtDate As MSForms.TextBox)
     
 End Sub
 
-Private Sub SpinButton1_SpinDown()
-    SpinDate1Day Me.ActiveControl, -1
-End Sub
-
-Private Sub SpinButton1_SpinUp()
-    SpinDate1Day Me.ActiveControl, 1
-End Sub
-
-Private Sub SpinDate1Day( _
+Private Sub ChangeDateBy1Day( _
             SpinButton As MSForms.SpinButton, _
-            DeltaDay As Single)
-        
+            DeltaDay As Integer)
+    
     Dim txt As MSForms.TextBox
-    Set txt = GetTextBoxUnderLabel(SpinButton)
+    Set txt = GetTextBoxUnderControl(SpinButton)
     
     If txt Is Nothing Then
         MsgBox "No matching TextBox found under Label1."
@@ -183,10 +171,6 @@ Private Sub SpinDate1Day( _
     
     txt.Value = CStr(CDate(txt.Value) + DeltaDay)
     
-End Sub
-
-Private Sub DatePicker64bitTextBox_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
-    TreatDateWithKeyboardEntry Me.ActiveControl, KeyCode
 End Sub
 
 Sub TreatDateWithKeyboardEntry( _
@@ -419,20 +403,37 @@ Private Sub DeleteSelectedText(txtDate As MSForms.TextBox)
     
 End Sub
 
-Private Sub DatePicker64bitTextBox_Enter()
-    SetDateMask Me.ActiveControl
-End Sub
-
-Private Sub SetDateMask(txtDate As MSForms.TextBox)
+Private Sub SetInitialDate(txtDate As MSForms.TextBox)
     
     If Not IsDate(txtDate.Text) Then
         txtDate.Text = Date
+        txtDate.BoundValue = Date
     End If
     
     txtDate.SelStart = 0
     
 End Sub
 
-Private Sub UserForm_Click()
-
-End Sub
+Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
+    
+    Dim DateSeparatorCount As Byte
+    DateSeparatorCount = 0
+    
+    Dim CurrentCharPosition As Byte
+    For CurrentCharPosition = 1 To Len(DATE_MASK)
+        Dim CurrentChar As String
+        CurrentChar = Mid(DATE_MASK, 1, 1)
+        
+        If CurrentChar = DATE_SEPARATOR Then
+            DateSeparatorCount = DateSeparatorCount + 1
+            
+            If DateSeparatorCount = SeparatorRank Then
+                GetDateSeparatorPosition = CurrentCharPosition
+                Exit Function
+            End If
+        End If
+    Next
+    
+    GetDateSeparatorPosition = -1
+    
+End Function
