@@ -37,6 +37,10 @@ Private Sub DatePicker64bitSpinButton_SpinDown()
     ChangeDateBy1Day Me.ActiveControl, -1
 End Sub
 
+Private Sub DatePicker64bitSpinButton_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    If KeyCode = vbKeyEscape Then Unload Me
+End Sub
+
 Private Sub DatePicker64bitTextBox_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
     TreatDateWithKeyboardEntry Me.ActiveControl, KeyCode
 End Sub
@@ -183,6 +187,14 @@ Sub TreatDateWithKeyboardEntry( _
             txtDate As MSForms.TextBox, _
             KeyCode As MSForms.ReturnInteger)
     
+    ' Allow to exit on Escape key
+    If KeyCode = vbKeyEscape Then
+        ' Avoid error message on escape
+        txtDate.Value = txtDate.BoundValue
+        Unload Me
+        Exit Sub
+    End If
+    
     ' Keys with allowed standard behavior
     If KeyCode = vbKeyLeft Or KeyCode = vbKeyRight Or KeyCode = vbKeyEnd Or KeyCode = vbKeyHome _
                 Or KeyCode = vbKeyControl Then
@@ -191,7 +203,7 @@ Sub TreatDateWithKeyboardEntry( _
     
     ' Exit TextBox
     If KeyCode = vbKeyTab Or KeyCode = vbKeyTab Or KeyCode = vbKeyUp Or KeyCode = vbKeyDown Or _
-            KeyCode = vbKeyReturn Or KeyCode = vbKeyEscape Then
+            KeyCode = vbKeyReturn Then
         Exit Sub
     End If
     
@@ -444,3 +456,6 @@ Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
     
 End Function
 
+Private Sub UserForm_Click()
+
+End Sub
