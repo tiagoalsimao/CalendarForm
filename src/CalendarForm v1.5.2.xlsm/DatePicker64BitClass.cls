@@ -152,12 +152,7 @@ Private Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
     If DateSelected = 0 Then
         Exit Sub
     End If
-    
-    Dim DateFormat As String
-    'DateFormat = GetDateFormat()
-    
-    ' Force output the same as the date format
-    'txtDate.Text = Format(DateSelected, DateFormat)
+
     txtDate.Text = Format(DateSelected)
     
 End Sub
