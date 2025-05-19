@@ -27,13 +27,13 @@ End Type
 
 ' Initialization method
 Public Sub Initialize( _
-            ByRef TextBox As MSForms.TextBox, _
-            ByRef SpinButton As MSForms.SpinButton, _
-            ByRef Label As MSForms.Label)
+            ByRef txtTextBox As MSForms.TextBox, _
+            ByRef spnSpinButton As MSForms.SpinButton, _
+            ByRef lblLabel As MSForms.Label)
     
-    Set txtDate = TextBox
-    Set spnDate = SpinButton
-    Set lblDate = Label
+    Set txtDate = txtTextBox
+    Set spnDate = spnSpinButton
+    Set lblDate = lblLabel
     
     SetInitialDate txtDate
     
@@ -50,6 +50,10 @@ End Sub
 
 Private Sub txtDate_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
     ValidateDate txtDate
+End Sub
+
+Public Sub Validate(ByRef Cancel As MSForms.ReturnBoolean)
+    ValidateDate txtDate, Cancel
 End Sub
 
 ' === SpinButton Events ===
@@ -175,11 +179,15 @@ Private Function GetPopupPosition(ctrl As MSForms.Control) As ObjectPosition
     
 End Function
 
-Private Sub ValidateDate(txtDate As MSForms.TextBox)
+Private Sub ValidateDate( _
+            txtDate As MSForms.TextBox, _
+            ByRef Cancel As MSForms.ReturnBoolean)
 
     If Not IsDate(txtDate.Text) Then
-        MsgBox "The date '" & txtDate.Text & "' is not valid. Reverting to " & txtDate.BoundValue
-        txtDate.Value = txtDate.BoundValue
+        MsgBox "The date '" & txtDate.Text & "' is not valid."
+        Cancel = True
+        'MsgBox "The date '" & txtDate.Text & "' is not valid. Reverting to " & txtDate.BoundValue
+        'txtDate.Value = txtDate.BoundValue
     Else
         txtDate.Value = txtDate.Text
     End If
