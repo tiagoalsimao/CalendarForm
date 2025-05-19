@@ -60,8 +60,8 @@ End Sub
 
 Private Sub TestDateEdit()
     
-    Dim dp As DatePicker64bitTemplate
-    Set dp = New DatePicker64bitTemplate
+    Dim dp As DatePicker64BitClass
+    Set dp = New DatePicker64BitClass
     
     With dp
         Debug.Print .DateEdit("__/__/____", 0, 1) = "1_/__/____"
@@ -99,8 +99,8 @@ End Sub
 
 Private Sub TestDateDeleteLeft()
     
-    Dim dp As DatePicker64bitTemplate
-    Set dp = New DatePicker64bitTemplate
+    Dim dp As DatePicker64BitClass
+    Set dp = New DatePicker64BitClass
     
     With dp
         Debug.Print .DateDeleteLeft("1_/__/____", 1) = "__/__/____"
@@ -133,8 +133,8 @@ End Sub
 
 Private Sub TestDeleteKey()
 
-    Dim dp As DatePicker64bitTemplate
-    Set dp = New DatePicker64bitTemplate
+    Dim dp As DatePicker64BitClass
+    Set dp = New DatePicker64BitClass
     
     With dp
         
