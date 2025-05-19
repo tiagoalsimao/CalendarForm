@@ -49,7 +49,7 @@ Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift 
 End Sub
 
 Private Sub txtDate_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
-    ValidateDate txtDate
+    ValidateDate txtDate, Cancel
 End Sub
 
 Public Sub Validate(ByRef Cancel As MSForms.ReturnBoolean)
