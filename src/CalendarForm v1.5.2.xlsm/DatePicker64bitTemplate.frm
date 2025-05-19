@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} DatePicker64bitTemplate 
    Caption         =   "DatePicker64bitTemplate"
-   ClientHeight    =   1722
-   ClientLeft      =   -399
-   ClientTop       =   -1750
-   ClientWidth     =   2800
+   ClientHeight    =   1946
+   ClientLeft      =   -434
+   ClientTop       =   -1904
+   ClientWidth     =   2842
    OleObjectBlob   =   "DatePicker64bitTemplate.frx":0000
    StartUpPosition =   1  'CenterOwner
 End

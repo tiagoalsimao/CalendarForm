@@ -35,7 +35,6 @@ Sub AdvancedCalendar()
     If dateVariable <> 0 Then Range("H34") = dateVariable
 End Sub
 
-
 Sub AdvancedCalendar2()
     dateVariable = CalendarForm.GetDate( _
         SelectedDate:=Range("H61").Value, _
