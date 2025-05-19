@@ -74,9 +74,9 @@ Private Sub lblDate_Click()
     UpdateDateFromLabelClick lblDate
 End Sub
 
-
 ' From the Label Click, get TextBox below control and lauch CalendarForm
 Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
+Private Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
 
     Dim txt As MSForms.TextBox
     Set txt = GetTextBoxUnderControl(CalendarLabel)
@@ -101,7 +101,7 @@ Private Function GetObjectPosition(ctrl As MSForms.Control) As ObjectPosition
     
 End Function
 
-Function GetTextBoxUnderControl(lbl As MSForms.Control) As MSForms.TextBox
+Private Function GetTextBoxUnderControl(lbl As MSForms.Control) As MSForms.TextBox
     
     Dim lblPosition As ObjectPosition
     lblPosition = GetObjectPosition(lbl)
@@ -131,7 +131,7 @@ Function GetTextBoxUnderControl(lbl As MSForms.Control) As MSForms.TextBox
     
 End Function
 
-Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
+Private Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
     
     Dim InitialTextDate As String
     InitialTextDate = txtDate.Text
@@ -174,7 +174,7 @@ Private Function GetPopupPosition(ctrl As MSForms.Control) As ObjectPosition
     Dim pos As ObjectPosition
     pos.Left = ParentUserForm.Left + ctrl.Left + ctrl.Width + Margin
     pos.Top = ParentUserForm.Top + CaptionHeigh + ctrl.Top
-
+    
     GetPopupPosition = pos
     
 End Function
@@ -210,7 +210,7 @@ Private Sub ChangeDateBy1Day( _
     
 End Sub
 
-Sub TreatDateWithKeyboardEntry( _
+Private Sub TreatDateWithKeyboardEntry( _
             txtDate As MSForms.TextBox, _
             KeyCode As MSForms.ReturnInteger)
     
@@ -264,7 +264,7 @@ ExitProcedure:
 End Sub
 
 ' Processes BackSpace Key
-Public Sub DeleteLeftTextBox(ByRef txtDate As MSForms.TextBox)
+Private Sub DeleteLeftTextBox(ByRef txtDate As MSForms.TextBox)
     
     Dim TextCursorPosition As Byte
     TextCursorPosition = txtDate.SelStart
@@ -280,6 +280,7 @@ Public Sub DeleteLeftTextBox(ByRef txtDate As MSForms.TextBox)
 End Sub
 
 ' Processes BackSpace Key
+' Public for Tests
 Public Function DateDeleteLeft( _
             ByRef CurrentDate As String, _
             ByRef TextCursorPosition As Byte) As String
@@ -304,7 +305,7 @@ ExitProcedure:
 End Function
 
 ' Processes Delete Key
-Public Sub DeleteRightTextBox(ByRef txtDate As MSForms.TextBox)
+Private Sub DeleteRightTextBox(ByRef txtDate As MSForms.TextBox)
     
     Dim TextCursorPosition As Byte
     TextCursorPosition = txtDate.SelStart
@@ -320,6 +321,7 @@ Public Sub DeleteRightTextBox(ByRef txtDate As MSForms.TextBox)
 End Sub
 
 ' Processes Delete Key
+' Public for Tests
 Public Function DateDeleteRight( _
             ByRef CurrentDate As String, _
             ByRef TextCursorPosition As Byte) As String
@@ -344,7 +346,7 @@ ExitProcedure:
     
 End Function
 
-Public Sub EditDateTextBox( _
+Private Sub EditDateTextBox( _
             txtDate As MSForms.TextBox, _
             KeyCode As MSForms.ReturnInteger)
     
@@ -364,7 +366,7 @@ Public Sub EditDateTextBox( _
     
 End Sub
 
-Function GetDigitFromKeyCode(KeyCode As MSForms.ReturnInteger) As Byte
+Private Function GetDigitFromKeyCode(KeyCode As MSForms.ReturnInteger) As Byte
     Select Case KeyCode
         Case vbKey0 To vbKey9
             GetDigitFromKeyCode = KeyCode - vbKey0
@@ -376,6 +378,7 @@ Function GetDigitFromKeyCode(KeyCode As MSForms.ReturnInteger) As Byte
 End Function
 
 ' Processes any numerical Key
+' Public for Tests
 Public Function DateEdit( _
             ByRef CurrentDate As String, _
             ByRef TextCursorPosition As Byte, _
@@ -482,4 +485,3 @@ Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
     GetDateSeparatorPosition = -1
     
 End Function
-
