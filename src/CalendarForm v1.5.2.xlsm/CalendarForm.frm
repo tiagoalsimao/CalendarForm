@@ -369,6 +369,7 @@ Private Sub InitializeUserform( _
         Me.StartUpPosition = 0
         Me.Top = PositionTop
         Me.Left = PositionLeft
+        KeepInScreen Me
     Else
         Me.StartUpPosition = 1
     End If
@@ -717,12 +718,10 @@ Private Sub InitializeUserform( _
     Call SetMonthYear(SelectedMonth, SelectedYear)
     Call SetDays(SelectedMonth, SelectedYear, SelectedDay)
     
-    FixUserFormPosition Me
-    
 End Sub
 
 ' Avoid calendar going out of the screen
-Public Sub FixUserFormPosition(frm As Object)
+Public Sub KeepInScreen(frm As Object)
     
     ' Get Excel's usable screen area
     Dim ScreenWidth As Long
