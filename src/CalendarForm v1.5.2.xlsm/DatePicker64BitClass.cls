@@ -230,7 +230,7 @@ Private Sub TreatDateWithKeyboardEntry( _
     
     ' Exit TextBox
     If KeyCode = vbKeyTab Or KeyCode = vbKeyTab Or KeyCode = vbKeyUp Or KeyCode = vbKeyDown Or _
-            KeyCode = vbKeyReturn Then
+            KeyCode = vbKeyReturn Or KeyCode = vbKeyShift Then
         Exit Sub
     End If
     
