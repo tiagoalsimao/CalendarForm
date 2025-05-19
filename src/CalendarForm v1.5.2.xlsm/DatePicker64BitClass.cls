@@ -16,7 +16,6 @@ Private WithEvents spnDate As MSForms.SpinButton
 Attribute spnDate.VB_VarHelpID = -1
 Private WithEvents lblDate As MSForms.Label
 Attribute lblDate.VB_VarHelpID = -1
-Private frmUserForm As Object  ' This will hold reference to the UserForm
 
 Private Type ObjectPosition
     Top As Single
@@ -35,7 +34,8 @@ Public Sub Initialize( _
     Set spnDate = spnSpinButton
     Set lblDate = lblLabel
     
-    SetInitialDate txtDate
+    ' Simulate Enter as event is not supported by TextBox
+    Call txtDate_Enter
     
 End Sub
 
@@ -75,7 +75,6 @@ Private Sub lblDate_Click()
 End Sub
 
 ' From the Label Click, get TextBox below control and lauch CalendarForm
-Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
 Private Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
 
     Dim txt As MSForms.TextBox
@@ -155,10 +154,11 @@ Private Sub UpdateDateWithCalendar(txtDate As MSForms.TextBox)
     End If
     
     Dim DateFormat As String
-    DateFormat = GetDateFormat()
+    'DateFormat = GetDateFormat()
     
     ' Force output the same as the date format
-    txtDate.Text = Format(DateSelected, DateFormat)
+    'txtDate.Text = Format(DateSelected, DateFormat)
+    txtDate.Text = Format(DateSelected)
     
 End Sub
 
