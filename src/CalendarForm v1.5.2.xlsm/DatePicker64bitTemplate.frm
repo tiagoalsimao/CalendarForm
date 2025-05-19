@@ -20,10 +20,17 @@ Private DatePicker2 As DatePicker64BitClass
 
 Private Sub UserForm_Initialize()
     Set DatePicker1 = New DatePicker64BitClass
-    DatePicker1.Initialize TextBox:=Me.DatePicker64bitTextBox1, _
-                SpinButton:=Me.DatePicker64bitSpinButton1, Label:=Me.DatePicker64bitLabel1
+    DatePicker1.Initialize DatePicker64bitTextBox1, DatePicker64bitSpinButton1, DatePicker64bitLabel1
                 
     Set DatePicker2 = New DatePicker64BitClass
-    DatePicker2.Initialize TextBox:=Me.DatePicker64bitTextBox2, _
-                SpinButton:=Me.DatePicker64bitSpinButton2, Label:=Me.DatePicker64bitLabel2
+    DatePicker2.Initialize DatePicker64bitTextBox2, DatePicker64bitSpinButton2, DatePicker64bitLabel2
+End Sub
+
+' _BeforeUpdate event required to be in userform as it is not available in WithEven from the Class Module.
+Private Sub DatePicker64bitTextBox1_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+     DatePicker1.Validate Cancel
+End Sub
+
+Private Sub DatePicker64bitTextBox2_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
+     DatePicker2.Validate Cancel
 End Sub
