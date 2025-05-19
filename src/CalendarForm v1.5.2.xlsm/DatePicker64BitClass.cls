@@ -184,10 +184,9 @@ Private Sub ValidateDate( _
             ByRef Cancel As MSForms.ReturnBoolean)
 
     If Not IsDate(txtDate.Text) Then
-        MsgBox "The date '" & txtDate.Text & "' is not valid."
+        MsgBox "The date '" & txtDate.Text & "' is not valid. Reverting to " & txtDate.BoundValue
+        txtDate.Value = txtDate.BoundValue
         Cancel = True
-        'MsgBox "The date '" & txtDate.Text & "' is not valid. Reverting to " & txtDate.BoundValue
-        'txtDate.Value = txtDate.BoundValue
     Else
         txtDate.Value = txtDate.Text
     End If
