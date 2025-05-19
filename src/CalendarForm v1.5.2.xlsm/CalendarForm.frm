@@ -802,6 +802,13 @@ Private Sub cmdToday_Click()
     UserformEventsEnabled = True
 End Sub
 
+Private Sub cmdToday_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    If KeyCode = vbKeyEscape Then Unload Me
+End Sub
+
+Private Sub scrlMonth_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    If KeyCode = vbKeyEscape Then Unload Me
+End Sub
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' UserForm_QueryClose
