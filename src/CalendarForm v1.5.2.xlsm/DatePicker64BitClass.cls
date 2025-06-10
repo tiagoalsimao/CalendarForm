@@ -56,10 +56,6 @@ Private Sub txtDate_Enter()
     SetInitialDate txtDate
 End Sub
 
-Public Function getHasValidChange() As Boolean
-    getHasValidChange = IsValidChange
-End Function
-
 Private Function IsValidChange() As Boolean
     IsValidChange = (txtDate.BoundValue = txtDate.Value)
 End Function
@@ -70,10 +66,6 @@ End Sub
 
 Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
     TreatDateWithKeyboardEntry txtDate, KeyCode
-End Sub
-
-Private Sub txtDate_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
-    ValidateDate txtDate, Cancel
 End Sub
 
 Public Sub Validate(ByRef Cancel As MSForms.ReturnBoolean)
@@ -100,12 +92,17 @@ End Sub
 
 ' From the Label Click, get TextBox below control and lauch CalendarForm
 Private Sub UpdateDateFromLabelClick(CalendarLabel As MSForms.Label)
-
+    
+    If CalendarLabel Is Nothing Then
+        MsgBox "Label is Nothing."
+        Exit Sub
+    End If
+    
     Dim txt As MSForms.TextBox
     Set txt = GetTextBoxUnderControl(CalendarLabel)
 
     If txt Is Nothing Then
-        MsgBox "No matching TextBox found under Label1."
+        MsgBox "No matching TextBox found under Label: " & CalendarLabel.Caption
         Exit Sub
     End If
     
@@ -198,11 +195,15 @@ Private Function GetPopupPosition(ctrl As MSForms.Control) As ObjectPosition
     
 End Function
 
+Public Function HasValidDate() As Boolean
+    HasValidDate = IsDate(txtDate.Text)
+End Function
+
 Private Sub ValidateDate( _
             txtDate As MSForms.TextBox, _
             ByRef Cancel As MSForms.ReturnBoolean)
 
-    If Not IsDate(txtDate.Text) Then
+    If Not HasValidDate Then
         MsgBox "The date '" & txtDate.Text & "' is not valid. Reverting to " & txtDate.BoundValue
         txtDate.Value = txtDate.BoundValue
         Cancel = True
@@ -350,11 +351,9 @@ Public Function DateDeleteRight( _
     ' Move one char to the right if Char Position falls in Date Separator
     If TextCursorPosition = 2 Or TextCursorPosition = 5 Then TextCursorPosition = TextCursorPosition + 1
     
-    TextCursorPosition = TextCursorPosition + 1
-    
     Dim NewDate As String
     NewDate = CurrentDate
-    Mid(NewDate, TextCursorPosition, 1) = "_"
+    Mid(NewDate, TextCursorPosition + 1, 1) = "_"
     
     CurrentDate = NewDate
     

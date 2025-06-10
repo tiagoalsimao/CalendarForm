@@ -43,7 +43,7 @@ End Sub
 
 Private Sub DatePicker64bitTextBox1_Change()
     
-    If Not DatePicker1.getHasValidChange Then Exit Sub
+    If Not DatePicker1.HasValidDate Then Exit Sub
     If DatePicker2 Is Nothing Then Exit Sub
     
     If DatePicker1.Value > DatePicker2.Value Then
@@ -54,7 +54,7 @@ End Sub
 
 Private Sub DatePicker64bitTextBox2_Change()
     
-    If Not DatePicker2.getHasValidChange Then Exit Sub
+    If Not DatePicker2.HasValidDate Then Exit Sub
     If DatePicker1 Is Nothing Then Exit Sub
     
     If DatePicker1.Value > DatePicker2.Value Then
