@@ -48,19 +48,22 @@ Public Property Let Value(InputValue As Date)
     txtDate.Value = CStr(InputValue)
 End Property
 
-' === TextBox Events ===
 Private Function IsValidChange() As Boolean
     IsValidChange = (txtDate.BoundValue = txtDate.Value)
 End Function
 
-Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
-    TreatDateWithKeyboardEntry txtDate, KeyCode
+' === Outside Events ===
 Public Sub Enter()
     txtDate.SelStart = 0
 End Sub
 
 Public Sub Validate_BeforeUpdate(ByRef Cancel As MSForms.ReturnBoolean)
     ValidateDate txtDate, Cancel
+End Sub
+
+' === TextBox Events ===
+Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+    TreatDateWithKeyboardEntry txtDate, KeyCode
 End Sub
 
 ' === SpinButton Events ===
