@@ -57,7 +57,7 @@ Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift 
     TreatDateWithKeyboardEntry txtDate, KeyCode
 End Sub
 
-Public Sub Validate(ByRef Cancel As MSForms.ReturnBoolean)
+Public Sub Validate_BeforeUpdate(ByRef Cancel As MSForms.ReturnBoolean)
     ValidateDate txtDate, Cancel
 End Sub
 
