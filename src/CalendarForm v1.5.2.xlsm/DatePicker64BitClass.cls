@@ -38,8 +38,7 @@ Public Sub Initialize( _
     Set spnDate = spnSpinButton
     Set lblDate = lblLabel
     
-    ' Simulate Enter as event is not supported by TextBox
-    Call txtDate_Enter
+    SetInitialDate txtDate
     
 End Sub
 
@@ -52,10 +51,6 @@ Public Property Let Value(InputValue As Date)
 End Property
 
 ' === TextBox Events ===
-Private Sub txtDate_Enter()
-    SetInitialDate txtDate
-End Sub
-
 Private Function IsValidChange() As Boolean
     IsValidChange = (txtDate.BoundValue = txtDate.Value)
 End Function
@@ -473,11 +468,10 @@ End Sub
 
 Private Sub SetInitialDate(txtDate As MSForms.TextBox)
     
-    If Not IsDate(txtDate.Text) Then
-        txtDate.Text = Date
-        txtDate.BoundValue = Date
+    If Not IsDate(txtDate.Value) Then
+        txtDate.Value = Date
     End If
-    
+
     txtDate.SelStart = 0
     
 End Sub
