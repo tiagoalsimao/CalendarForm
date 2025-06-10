@@ -17,8 +17,6 @@ Attribute spnDate.VB_VarHelpID = -1
 Private WithEvents lblDate As MSForms.Label
 Attribute lblDate.VB_VarHelpID = -1
 
-Private HasValidChange As Boolean
-
 Private Type ObjectPosition
     Top As Single
     Left As Single
@@ -54,10 +52,6 @@ End Property
 Private Function IsValidChange() As Boolean
     IsValidChange = (txtDate.BoundValue = txtDate.Value)
 End Function
-
-Private Sub txtDate_Change()
-    HasValidChange = IsValidChange()
-End Sub
 
 Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
     TreatDateWithKeyboardEntry txtDate, KeyCode
