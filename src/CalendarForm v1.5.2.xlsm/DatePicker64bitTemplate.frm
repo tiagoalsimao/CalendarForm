@@ -31,10 +31,17 @@ Private Sub UserForm_Initialize()
     
 End Sub
 
+Private Sub DatePicker64bitTextBox1_Enter()
+    DatePicker64bitTextBox1.SelStart = 0
+End Sub
+
+Private Sub DatePicker64bitTextBox2_Enter()
+    DatePicker64bitTextBox2.SelStart = 0
+End Sub
+
 ' _BeforeUpdate event required to be in userform as it is not available in WithEven from the Class Module.
 Private Sub DatePicker64bitTextBox1_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)
      DatePicker1.Validate Cancel
-     DatePicker64bitTextBox1_Change
 End Sub
 
 Private Sub DatePicker64bitTextBox2_BeforeUpdate(ByVal Cancel As MSForms.ReturnBoolean)

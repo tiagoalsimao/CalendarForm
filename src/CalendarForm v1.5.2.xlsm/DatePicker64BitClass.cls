@@ -214,17 +214,38 @@ Private Sub ChangeDateBy1( _
         Exit Sub
     End If
     
-    Dim DateInterval As String
-    DateInterval = GetDateInterval(txt)
+    With txt
+        Dim CurrentDate As Date
+        CurrentDate = .Value
         
-    Dim TextCursorPosition As Byte
-    TextCursorPosition = txtDate.SelStart
+        Dim TextCursorPosition As Byte
+        TextCursorPosition = .SelStart
+    End With
     
-    txt.Value = CStr(DateAdd(DateInterval, DeltaDay, txt.Value))
+    Dim NewDate As Date
+    Select Case TextCursorPosition
+        Case Is < 3
+            NewDate = DateAdd("d", DeltaDay, CurrentDate)
+        Case Is < 5
+            If isEndOfMonth(CurrentDate) Then
+                NewDate = DateAdd("m", DeltaDay, CurrentDate + 1) - 1
+            Else
+                NewDate = DateAdd("m", DeltaDay, CurrentDate)
+            End If
+        Case Else
+            NewDate = DateAdd("yyyy", DeltaDay, CurrentDate)
+    End Select
     
-    txtDate.SelStart = TextCursorPosition
+    With txt
+        .Value = CStr(NewDate)
+        .SelStart = TextCursorPosition
+    End With
     
 End Sub
+
+Private Function isEndOfMonth(InputDate As Date) As Boolean
+    isEndOfMonth = (Day(InputDate + 1) = 1)
+End Function
 
 Private Sub TreatDateWithKeyboardEntry( _
             txtDate As MSForms.TextBox, _
@@ -499,21 +520,5 @@ Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
     Next
     
     GetDateSeparatorPosition = -1
-    
-End Function
-
-Private Function GetDateInterval(txtDate As MSForms.TextBox) As String
-    
-    Dim TextCursorPosition As Byte
-    TextCursorPosition = txtDate.SelStart
-    
-    Select Case TextCursorPosition
-        Case Is < 3
-            GetDateInterval = "d"
-        Case Is < 5
-            GetDateInterval = "m"
-        Case Else
-            GetDateInterval = "yyyy"
-    End Select
     
 End Function
