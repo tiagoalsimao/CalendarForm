@@ -55,6 +55,8 @@ End Function
 
 Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
     TreatDateWithKeyboardEntry txtDate, KeyCode
+Public Sub Enter()
+    txtDate.SelStart = 0
 End Sub
 
 Public Sub Validate_BeforeUpdate(ByRef Cancel As MSForms.ReturnBoolean)
