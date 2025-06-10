@@ -1,6 +1,6 @@
 Attribute VB_Name = "TestingModule"
 Public Const DATE_MASK As String = "__/__/____"
-Public Const DATE_SEPARATOR As String = "/"
+
 
 Sub TestUserForm()
     DatePicker64bitTemplate.Show

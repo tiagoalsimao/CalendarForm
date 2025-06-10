@@ -17,12 +17,16 @@ Attribute spnDate.VB_VarHelpID = -1
 Private WithEvents lblDate As MSForms.Label
 Attribute lblDate.VB_VarHelpID = -1
 
+Private HasValidChange As Boolean
+
 Private Type ObjectPosition
     Top As Single
     Left As Single
     Bottom As Single
     Right As Single
 End Type
+
+Private Const DATE_SEPARATOR As String = "/"
 
 ' Initialization method
 Public Sub Initialize( _
@@ -39,9 +43,29 @@ Public Sub Initialize( _
     
 End Sub
 
+Public Property Get Value() As Date
+    Value = CDate(txtDate.Value)
+End Property
+
+Public Property Let Value(InputValue As Date)
+    txtDate.Value = CStr(InputValue)
+End Property
+
 ' === TextBox Events ===
 Private Sub txtDate_Enter()
     SetInitialDate txtDate
+End Sub
+
+Public Function getHasValidChange() As Boolean
+    getHasValidChange = IsValidChange
+End Function
+
+Private Function IsValidChange() As Boolean
+    IsValidChange = (txtDate.BoundValue = txtDate.Value)
+End Function
+
+Private Sub txtDate_Change()
+    HasValidChange = IsValidChange()
 End Sub
 
 Private Sub txtDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
@@ -183,7 +207,7 @@ Private Sub ValidateDate( _
         txtDate.Value = txtDate.BoundValue
         Cancel = True
     Else
-        txtDate.Value = txtDate.Text
+        txtDate.Value = CDate(txtDate.Text)
     End If
     
 End Sub
@@ -355,8 +379,11 @@ Private Sub EditDateTextBox( _
     
     DateEdit TextDate, TextCursorPosition, InputNumber
     
-    txtDate.Text = TextDate
-    txtDate.SelStart = TextCursorPosition
+    ' Disable events to avoid triggering _Change procedure
+    Application.EnableEvents = False
+        txtDate.Text = TextDate
+        txtDate.SelStart = TextCursorPosition
+    Application.EnableEvents = True
     
 End Sub
 
