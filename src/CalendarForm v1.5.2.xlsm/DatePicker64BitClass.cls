@@ -197,7 +197,7 @@ Private Sub ValidateDate( _
         txtDate.Value = txtDate.BoundValue
         Cancel = True
     Else
-        txtDate.Value = CDate(txtDate.Text)
+        txtDate.Value = CStr(CDate(txtDate.Text))
     End If
     
 End Sub
