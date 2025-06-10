@@ -69,11 +69,11 @@ End Sub
 
 ' === SpinButton Events ===
 Private Sub spnDate_SpinUp()
-    ChangeDateBy1Day spnDate, 1
+    ChangeDateBy1 spnDate, 1
 End Sub
 
 Private Sub spnDate_SpinDown()
-    ChangeDateBy1Day spnDate, -1
+    ChangeDateBy1 spnDate, -1
 End Sub
 
 Private Sub spnDate_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
@@ -208,7 +208,7 @@ Private Sub ValidateDate( _
     
 End Sub
 
-Private Sub ChangeDateBy1Day( _
+Private Sub ChangeDateBy1( _
             SpinButton As MSForms.SpinButton, _
             DeltaDay As Integer)
     
@@ -220,7 +220,15 @@ Private Sub ChangeDateBy1Day( _
         Exit Sub
     End If
     
-    txt.Value = CStr(CDate(txt.Value) + DeltaDay)
+    Dim DateInterval As String
+    DateInterval = GetDateInterval(txt)
+        
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+    
+    txt.Value = CStr(DateAdd(DateInterval, DeltaDay, txt.Value))
+    
+    txtDate.SelStart = TextCursorPosition
     
 End Sub
 
@@ -497,5 +505,21 @@ Private Function GetDateSeparatorPosition(SeparatorRank As Byte) As Byte
     Next
     
     GetDateSeparatorPosition = -1
+    
+End Function
+
+Private Function GetDateInterval(txtDate As MSForms.TextBox) As String
+    
+    Dim TextCursorPosition As Byte
+    TextCursorPosition = txtDate.SelStart
+    
+    Select Case TextCursorPosition
+        Case Is < 3
+            GetDateInterval = "d"
+        Case Is < 5
+            GetDateInterval = "m"
+        Case Else
+            GetDateInterval = "yyyy"
+    End Select
     
 End Function
